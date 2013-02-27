@@ -1,11 +1,10 @@
 
-var Mem = require('../mem')
-var Sub = require('../')
+var Mem = require('../')
 
 var base = Mem()
-var a    = Sub(base, 'A')
-var b    = Sub(base, 'B')
-var _a    = Sub(a, '_A')
+var a    = base.namespace('A')
+var b    = base.namespace('B')
+var _a   = a.namespace('_A')
 
 a.put('a', Math.random(), function () {
   b.put('b', Math.random(), function () {

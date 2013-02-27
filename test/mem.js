@@ -1,6 +1,6 @@
 
 
-var mem = require('../mem')()
+var mem = require('../')()
 
 mem.put('key', 'value', function (err) {
   if(err) throw err

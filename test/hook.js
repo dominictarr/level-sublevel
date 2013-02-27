@@ -1,12 +1,11 @@
 
-var Mem = require('../mem')
-var Sub = require('../')
+var Mem = require('../')
 
 var base = Mem()
-var a    = Sub(base, 'A')
-var b    = Sub(base, 'SEQ')
-var c    = Sub(base, '___')
-var _a    = Sub(a, '_A')
+var a    = base.namespace('A')
+var b    = base.namespace('SEQ')
+var c    = base.namespace('___')
+var _a   = base.namespace('_A')
 var i = 0
 
 a.pre(function (ch, add) {

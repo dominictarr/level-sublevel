@@ -1,105 +1,94 @@
-var Bucket = require('range-bucket')
-var Hooks  = require('level-hooks')
 
-function SubDB (db, prefix) {
-  if(!(this instanceof SubDB)) return new SubDB(db, prefix)
-  if(!db)     throw new Error('must provide db')
-  if(!prefix) throw new Error('must provide prefix')
+var EventEmitter = require('events').EventEmitter
+var next = process.nextTick
+var SubDb = require('./sub')
 
-  Hooks(db)
+module.exports = function () {
 
-  this._parent = db
-  this._prefix = prefix
-  this._bucket = Bucket(prefix)
-}
+  var store = {}
+  var emitter = new EventEmitter()
 
-var SDB = SubDB.prototype
+  emitter.namespace = function (prefix) {
+    return new SubDb(emitter, prefix)
+  }
 
-SDB._key = function (key) {
-  return this._bucket(key[0] === '\xFF' ? key.substring(1) : key)
-}
+  emitter.put = function (key, value, opts, cb) {
+    if(!cb) cb = opts, opts = null
+    emitter._change(
+      [{type: 'put', key: key, value: value}]
+    , cb)
+  }
 
-SDB.put = function (key, value, opts, cb) {
-  console.log(key)
-  //prehook
-  this._parent.put(this._key(key), value, opts, cb)
-}
+  emitter.del = function (key, value, opts, cb) {
+    if(!cb) cb = opts, opts = null
+    emitter._change(
+      [{type: 'del', key: key, value: value}]
+    , cb)
+  }
 
-SDB.get = function (key, opts, cb) {
-  this._parent.get(this._key(key), opts, cb)
-}
-
-SDB.del = function (key, opts, cb) {
-  this._parent.del(this._key(key), opts, cb)
-}
-
-SDB.batch = function (changes, opts, cb) {
-  this._parent.batch(this._key(key), opts, cb)
-}
-
-SDB.prefix = function () {
-  return this._parent.prefix() + '\xFF' + this._prefix + '\xFF'
-}
-
-function root(db) {
-  if(!db._parent) return db
-  return root(db._parent)
-}
-
-SDB.pre = function (hook) {
-  var r = root(this._parent)
-  r._pre(this.prefix(), hook)
-}
-
-var exports = module.exports = SubDB
-
-/*
-exports.couple = function (a, b, transform) {
-  //Hooks(from); Hooks(to)
-
-  //first, find the mutual parent
-  if(a._parent == b._parent) { //<-- simple case
-    //register listener on the parent.
-    //get the prefixes between the 
-    var parent = a._parent
-    Hooks(a._parent)
-    a.pre(function (changes) {
-      changes.forEach(function (e) {
-        if(
+  emitter._change = function (ch, cb) {
+    console.log(ch)
+    ch = emitter._hook(ch)
+    next(function () {
+      ch.forEach(function (e) {
+        if(e.type == 'del') delete store[e.key]
+        else                store[e.key] = e.value
       })
+      if(ch.length == 1)
+        emitter.emit(ch[0].type, ch[0].key, ch[0].value)
+      else
+        emitter.emit('batch', ch)
+      cb()
     })
   }
+
+  emitter.batch = function (changes, opts, cb) {
+    if(!cb) cb = opts, opts = null
+    emitter._change(changes, cb)
+    return emitter
+  }
+
+  emitter.store = store
+
+  emitter._hook = function (batch) {
+    if(!Array.isArray(batch))
+      batch = [batch]
+    var hooks = this._hooks || []
+    function hook(e, i) {
+      hooks.forEach(function (h) {
+        console.log('hook', e, h.prefix)
+          if(e.key.indexOf(h.prefix) == 0)
+            h.hook(e, function (ch, db) {
+              if(ch === false) {
+                return delete batch[i]
+              }
+              ch.key = (db ? db.prefix() : h.prefix) + ch.key
+              console.log('batch - add', batch, ch)
+              var j = batch.push(ch)
+              hook(ch, batch.length - 1)
+              
+            })
+      })
+    }
+
+    batch.forEach(hook)
+    return batch
+  }
+
+  emitter._pre = function (prefix, hook) {
+    this._hooks = this._hooks || []
+    this._hooks.push({prefix: prefix, hook: hook})
+    console.log("_HOOKS", this._hooks)
+  }
+
+  emitter.pre = function (hook) {
+    emitter._pre('', hook)
+  }
+
+  emitter.prefix = function () {
+    return ''
+  }
+
+  return emitter
 }
-*/
-/*
-//hmm, maybe the db needs some sort of pipe like thing?
-//stream from
-
-db.pipe(db2) //and check if the databases has a common ancestor,
-             //if so, insert atomically.
-//cos, the thing I need is for it to be easy to transform data from one db to another.
-//and... just have a function to transform
-
-so... maybe make 
-
-//compare the prefixes of db and jobs, so you know where to register the listener!
-db.pre(jobs, function (batch) {
-  return queueFrom(batch)
-})
-
-couple(db, jobs).on(function (v) {
-  return {key: k, value: v}
-  //and it will be prefixed with the right prefix for jobs.
-})
-
-jobs.post(function (item) {
-  //process the job...
-  asyncWhatever(function (err) {
-    if(err) return retry(item)
-    jobs.del(item.key)
-  })
-})
-
-jobs.trigger(function(
-*/
 
