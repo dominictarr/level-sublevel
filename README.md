@@ -3,7 +3,7 @@
 In memory demo, to test ideas for making leveldb plugins.
 
 example: whenever a record is inserted,
-save an index to it my the time it was inserted.
+save an index to it by the time it was inserted.
 
 ``` js
 var sub = db.namespace('SEQ')
