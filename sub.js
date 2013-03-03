@@ -1,4 +1,3 @@
-var Bucket = require('range-bucket')
 var Hooks  = require('level-hooks')
 
 function SubDB (db, prefix, sep) {
@@ -9,7 +8,6 @@ function SubDB (db, prefix, sep) {
   Hooks(db)
 
   this._parent = db
-  this._bucket = Bucket(prefix)
   this._sep = sep || '\xff'
   this._prefix = prefix
   var self = this
@@ -26,7 +24,6 @@ function SubDB (db, prefix, sep) {
 var SDB = SubDB.prototype
 
 SDB._key = function (key) {
-//  return this._bucket(key[0] === this._sep ? key.substring(1) : key)
   var s = this._prefix + this._sep + key
   if(!this._parent._parent)
     return this._sep + s
