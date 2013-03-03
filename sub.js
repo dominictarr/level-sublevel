@@ -33,7 +33,7 @@ SDB._key = function (key) {
   return s
 }
 
-SDB.namespace = function (prefix) {
+SDB.sublevel = function (prefix) {
   return new SubDB(this, prefix)
 }
 
