@@ -43,7 +43,7 @@ Whenever a record is inserted,
 save an index to it by the time it was inserted.
 
 ``` js
-var sub = db.namespace('SEQ')
+var sub = db.sublevel('SEQ')
 
 db.pre(function (ch, add) {
   add({
