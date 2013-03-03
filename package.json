@@ -1,19 +1,23 @@
 {
-  "name": "subdb",
+  "name": "level-sublevel",
   "description": "",
   "version": "0.0.0",
-  "homepage": "https://github.com/dominictarr/subdb",
+  "homepage": "https://github.com/dominictarr/level-sublevel",
   "repository": {
     "type": "git",
-    "url": "git://github.com/dominictarr/subdb.git"
+    "url": "git://github.com/dominictarr/level-sublevel.git"
   },
   "dependencies": {
+    "level-hooks": "~3.0.2"
   },
   "devDependencies": {
+    "levelup": "~0.6.1",
+    "rimraf": "~2.1.4",
+    "tape": "~0.2.2"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
   },
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
-  "license": "MIT"  
+  "license": "MIT"
 }
