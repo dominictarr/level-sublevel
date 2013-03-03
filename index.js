@@ -11,7 +11,7 @@ module.exports   = function (db, sep) {
   sep = sep || '\xff'
   Hooks(db)
 
-  db.namespace = function (prefix) {
+  db.sublevel = function (prefix) {
     return new SubDb(db, prefix, sep)
   }
 

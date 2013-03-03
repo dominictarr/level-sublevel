@@ -8,8 +8,8 @@ require('tape')('sublevel', function (t) {
 
     Sublevel(base, '~')
 
-    var a    = base.namespace('A')
-    var b    = base.namespace('SEQ')
+    var a    = base.sublevel('A')
+    var b    = base.sublevel('SEQ')
 
     var i = 0
 
