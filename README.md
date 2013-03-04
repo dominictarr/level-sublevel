@@ -67,13 +67,6 @@ db.put('key', 'VALUE', function (err) {
 Notice that `sub` is the second argument to `add`,
 which tells the hook to save the new record in the `sub` section.
 
-## Known Issues
-
-Until this issue is closed https://github.com/rvagg/node-levelup/issues/86
-hooks do not work correctly until the database is fully opened.
-Use `levelup(dir, function (err, db) {...})` to open db,
-not `var db = levelup(dir)`.
-
 ## License
 
 MIT
