@@ -1,0 +1,55 @@
+
+require('tape')('sublevel', function (t) {
+
+  require('rimraf').sync('/tmp/test-sublevel-readstream')
+
+  var base = require('levelup')('/tmp/test-sublevel-readstream', function () {
+    var Sublevel = require('../')
+
+    Sublevel(base, '~')
+
+    var a    = base.sublevel('A')
+
+    var i = 0
+
+    function all(db, cb) {
+      var o = {}
+      db.createReadStream().on('data', function (data) {
+        o[data.key.toString()] = data.value.toString()
+      })
+      .on('end', function () {
+        cb(null, o)
+      })
+      .on('error', cb)
+    }
+
+    var _a, _b, _c
+
+    var as = a.createWriteStream()
+    as.write({key: 'a', value: _a ='AAA_'+Math.random()})
+    as.write({key: 'b', value: _b = 'BBB_'+Math.random()})
+    as.write({key: 'c', value: _c = 'CCC_'+Math.random()})
+    as.end()
+    as.on('close', function () {
+
+      all(base, function (err, obj) {
+        console.log(obj)
+        t.deepEqual(obj, 
+          { '~A~a': _a,
+            '~A~b': _b,
+            '~A~c': _c
+          })
+
+        all(a, function (err, obj) {
+          console.log(obj)
+          t.deepEqual(obj, 
+            { 'a': _a,
+              'b': _b,
+              'c': _c
+            })
+          t.end()
+        })
+      })
+    })
+  })
+})
