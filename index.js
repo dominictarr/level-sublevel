@@ -27,6 +27,7 @@ module.exports   = function (db, sep) {
       , hook)
     return db
   }
+
   db.post = function (hook) {
     db.hooks.post({start: '', end: sep}, hook)
     return db

@@ -57,18 +57,21 @@ SDB.prefix = function () {
 
 ;['createReadStream', 'createKeyStream', 'createValueStream']
   .forEach(function (createStream) {
-    SDB[createStream] = function () {
+    SDB[createStream] = function (opts) {
       var r = root(this)
       var p = this.prefix()
-      return r[createStream].apply(r, arguments)
+      opts = opts || {}
+      opts.start = p + (opts.start || '')
+      opts.end = p + (opts.end || this._sep)
+      return r[createStream].call(r, opts)
         .on('data', function (d) {
           //mutate the prefix!
-          d.key = d.key.replace(prefix, '')
+          d.key = d.key.replace(p, '')
         })
     }
   })
 
-SDB.writeStream = function () {
+SDB.createWriteStream = function () {
   var r = root(this)
   var p = this.prefix()
   var ws = r.createWriteStream.apply(r, arguments)
