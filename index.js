@@ -19,8 +19,18 @@ module.exports   = function (db, sep) {
     return ''
   }
 
-  db.pre = db.hooks.pre
-  db.post = db.hooks.post
+  db.pre = function (hook) {
+    r.hooks.pre({
+        start: '',
+        end  : sep
+      }
+      , hook)
+    return db
+  }
+  db.post = function (hook) {
+    db.hooks.post({start: '', end: sep}, hook)
+    return db
+  }
 
   return db
 }
