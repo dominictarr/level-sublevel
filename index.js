@@ -20,7 +20,7 @@ module.exports   = function (db, sep) {
   }
 
   db.pre = function (hook) {
-    r.hooks.pre({
+    db.hooks.pre({
         start: '',
         end  : sep
       }
