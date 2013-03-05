@@ -105,11 +105,14 @@ SDB.pre = function (hook) {
 
 SDB.post = function (hook) {
   var r = root(this._parent)
+  var p = this.prefix()
   r.hooks.post({
-    start: this.prefix(),
-    end  : this.prefix() + this._sep
+    start: p,
+    end  : p + this._sep
   }
-  , hook)
+  , function (data) {
+    hook({key: data.key.replace(p, ''), value: data.value, type: data.type})
+  })
   return this
 }
 
