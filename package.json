@@ -11,9 +11,10 @@
     "level-hooks": "~3.0.2"
   },
   "devDependencies": {
-    "levelup": "~0.6.1",
+    "levelup": "~0.6",
     "rimraf": "~2.1.4",
-    "tape": "~0.2.2"
+    "tape": "~0.2.2",
+    "shasum": "0.0.2"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
