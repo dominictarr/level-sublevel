@@ -48,7 +48,11 @@ SDB.del = function (key, opts, cb) {
 }
 
 SDB.batch = function (changes, opts, cb) {
-  this._parent.batch(this._key(key), opts, cb)
+  var self = this
+  changes.forEach(function (ch) {
+    ch.key = self._key(ch.key)
+  })
+  this._parent.batch(changes, opts, cb)
 }
 
 SDB.prefix = function () {
