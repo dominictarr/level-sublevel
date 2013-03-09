@@ -67,21 +67,32 @@ SDB.prefix = function (key) {
   return this._parent.prefix() + this._sep + this._prefix + this._sep + (key || '')
 }
 
-;['createReadStream', 'createKeyStream', 'createValueStream']
-  .forEach(function (createStream) {
-    SDB[createStream] = function (opts) {
-      var r = root(this)
-      var p = this.prefix()
-      opts = opts || {}
-      opts.start = p + (opts.start || '')
-      opts.end = p + (opts.end || this._sep)
-      return r[createStream].call(r, opts)
-        .on('data', function (d) {
-          //mutate the prefix!
-          d.key = d.key.substring(p.length)
-        })
-    }
-  })
+SDB.createKeyStream = function (opts) {
+  opts = opts || {}
+  opts.keys = true
+  return this.createReadStream(opts)
+}
+
+SDB.createValueStream = function (opts) {
+  opts = opts || {}
+  opts.keys = true
+  return this.createReadStream(opts)
+}
+
+SDB.createReadStream = function (opts) {
+  opts = opts || {}
+  var r = root(this)
+  var p = this.prefix()
+  opts.start = p + (opts.start || '')
+  opts.end = p + (opts.end || this._sep)
+  return r.createReadStream(opts)
+    .on('data', function (d) {
+      //mutate the prefix!
+      if(d.key)
+        d.key = d.key.substring(p.length)
+    })
+}
+
 
 SDB.createWriteStream = function () {
   var r = root(this)
