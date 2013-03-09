@@ -1,4 +1,8 @@
 var Hooks  = require('level-hooks')
+var EventEmitter = require('events').EventEmitter
+var inherits = require('util').inherits
+
+inherits(SubDB, EventEmitter)
 
 function SubDB (db, prefix, sep) {
   if(!(this instanceof SubDB)) return new SubDB(db, prefix)
