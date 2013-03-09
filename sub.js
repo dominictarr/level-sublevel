@@ -14,6 +14,7 @@ function SubDB (db, prefix, sep) {
   this._parent = db
   this._sep = sep || '\xff'
   this._prefix = prefix
+  this._root = root(this)
   var self = this
   this.hooks = {
     pre: function () {
@@ -39,28 +40,31 @@ SDB.sublevel = function (prefix) {
 }
 
 SDB.put = function (key, value, opts, cb) {
-  this._parent.put(this._key(key), value, opts, cb)
+  this._root.put(this.prefix(key), value, opts, cb)
+//  this._parent.put(this._key(key), value, opts, cb)
 }
 
 SDB.get = function (key, opts, cb) {
-  this._parent.get(this._key(key), opts, cb)
+  this._root.get(this.prefix(key), opts, cb)
+//  this._parent.get(this._key(key), opts, cb)
 }
 
 SDB.del = function (key, opts, cb) {
-  this._parent.del(this._key(key), opts, cb)
+  this._root.del(this.prefix(key), opts, cb)
+//  this._parent.del(this._key(key), opts, cb)
 }
 
 SDB.batch = function (changes, opts, cb) {
   var self = this
   changes.forEach(function (ch) {
-    ch.key = self._key(ch.key)
+    ch.key = (ch.prefix || self).prefix(ch.key)
+    if(ch.prefix) ch.prefix = null
   })
-  this._parent.batch(changes, opts, cb)
-
+  this._root.batch(changes, opts, cb)
 }
 
-SDB.prefix = function () {
-  return this._parent.prefix() + this._sep + this._prefix + this._sep
+SDB.prefix = function (key) {
+  return this._parent.prefix() + this._sep + this._prefix + this._sep + (key || '')
 }
 
 ;['createReadStream', 'createKeyStream', 'createValueStream']
