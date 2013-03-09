@@ -67,6 +67,22 @@ db.put('key', 'VALUE', function (err) {
 Notice that `sub` is the second argument to `add`,
 which tells the hook to save the new record in the `sub` section.
 
+## Batches
+
+In `sublevel` batches also support a `prefix: subdb` property,
+if set, this row will be inserted into that database section,
+instead of the current section.
+
+``` js
+var sub1 = db.sublevel('SUB_1')
+var sub2 = db.sublevel('SUM_2')
+
+sub.batch([
+  {key: 'key', value: 'Value', type: 'put'},
+  {key: 'key', value: 'Value', type: 'put', prefix: sub2},
+])
+```
+
 ## License
 
 MIT
