@@ -35,8 +35,6 @@ SDB.sublevel = function (prefix) {
 }
 
 SDB.put = function (key, value, opts, cb) {
-  //prehook
-  console.log('PUT', this._key(key), this.prefix())
   this._parent.put(this._key(key), value, opts, cb)
 }
 
