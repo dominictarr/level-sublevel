@@ -1,7 +1,7 @@
 
 require('tape')('sublevel', function (t) {
 
-  require('rimraf').sync('/tmp/test-subdb')
+  require('rimraf').sync('/tmp/test-sublevel')
 
   var base = require('levelup')('/tmp/test-sublevel', function () {
     var Sublevel = require('../')
@@ -25,6 +25,7 @@ require('tape')('sublevel', function (t) {
     }
 
     a.pre(function (ch, add) {
+      console.log(ch)
       add({key: i++, value: ch.key, type: 'put'}, b)
     })
 
@@ -43,9 +44,9 @@ require('tape')('sublevel', function (t) {
           { '~A~a': _a,
             '~A~b': _b,
             '~A~c': _c,
-            '~SEQ~0': '~A~a',
-            '~SEQ~1': '~A~b',
-            '~SEQ~2': '~A~c' })
+            '~SEQ~0': 'a',
+            '~SEQ~1': 'b',
+            '~SEQ~2': 'c' })
         t.end()
       })
     }
