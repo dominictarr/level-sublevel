@@ -24,18 +24,19 @@ function SubDB (db, prefix, sep) {
 var SDB = SubDB.prototype
 
 SDB._key = function (key) {
-  var s = this._prefix + this._sep + key
-  if(!this._parent._parent)
-    return this._sep + s
-  return s
+  return this._sep 
+    + this._prefix 
+    + this._sep
+    + key
 }
 
 SDB.sublevel = function (prefix) {
-  return new SubDB(this, prefix)
+  return new SubDB(this, prefix, this._sep)
 }
 
 SDB.put = function (key, value, opts, cb) {
   //prehook
+  console.log('PUT', this._key(key), this.prefix())
   this._parent.put(this._key(key), value, opts, cb)
 }
 
@@ -53,6 +54,7 @@ SDB.batch = function (changes, opts, cb) {
     ch.key = self._key(ch.key)
   })
   this._parent.batch(changes, opts, cb)
+
 }
 
 SDB.prefix = function () {
@@ -70,7 +72,7 @@ SDB.prefix = function () {
       return r[createStream].call(r, opts)
         .on('data', function (d) {
           //mutate the prefix!
-          d.key = d.key.replace(p, '')
+          d.key = d.key.substring(p.length)
         })
     }
   })
@@ -99,11 +101,21 @@ function root(db) {
 
 SDB.pre = function (hook) {
   var r = root(this._parent)
+  var p = this.prefix()
+
   r.hooks.pre({
-    start: this.prefix(),
-    end  : this.prefix() + this._sep
+    start: p,
+    end  : p + this._sep
   }
-  , hook)
+  , function (ch, add) {
+    hook({
+      key: ch.key.substring(p.length),
+      value: ch.value,
+      type: ch.type
+    }, function (ch, _p) {
+      add(ch, _p || p)
+    })
+  })
   return this
 }
 
@@ -115,7 +127,7 @@ SDB.post = function (hook) {
     end  : p + this._sep
   }
   , function (data) {
-    hook({key: data.key.replace(p, ''), value: data.value, type: data.type})
+    hook({key: data.key.substring(p.length), value: data.value, type: data.type})
   })
   return this
 }
