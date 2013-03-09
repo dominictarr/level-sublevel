@@ -88,6 +88,7 @@ SDB.createReadStream = function (opts) {
   return r.createReadStream(opts)
     .on('data', function (d) {
       //mutate the prefix!
+      //this doesn't work for createKeyStream admittedly.
       if(d.key)
         d.key = d.key.substring(p.length)
     })
