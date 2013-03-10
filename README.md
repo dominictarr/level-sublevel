@@ -80,7 +80,7 @@ var sub2 = db.sublevel('SUM_2')
 sub.batch([
   {key: 'key', value: 'Value', type: 'put'},
   {key: 'key', value: 'Value', type: 'put', prefix: sub2},
-])
+], function (err) {...})
 ```
 
 ## License
