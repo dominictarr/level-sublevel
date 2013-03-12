@@ -8,7 +8,8 @@
     "url": "git://github.com/dominictarr/level-sublevel.git"
   },
   "dependencies": {
-    "level-hooks": "~3.0.2"
+    "level-hooks": "~4.1.0",
+    "string-range": "~1.1"
   },
   "devDependencies": {
     "levelup": "~0.6",
