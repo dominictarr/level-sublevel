@@ -19,14 +19,25 @@ module.exports   = function (db, sep) {
     return '' + (key || '')
   }
 
-  db.pre = function (hook) {
-    db.hooks.pre({
+  db.pre = function (range, hook) {
+    if(!hook)
+      hook = range, range = {
         start: '',
         end  : sep
       }
-      , hook)
-    return db
+    return db.hooks.pre(range, hook)
   }
+
+  db.post = function (range, hook) {
+    if(!hook)
+      hook = range, range = {
+        start: '',
+        end  : sep
+      }
+    console.log('--posthook range', range)
+    return db.hooks.post(range, hook)
+  }
+
 
   var batch = db.batch
   db.batch = function (changes, opts, cb) {
@@ -38,12 +49,6 @@ module.exports   = function (db, sep) {
     })
     batch.call(db, changes, opts, cb)
   }
-
-  db.post = function (hook) {
-    db.hooks.post({start: '', end: sep}, hook)
-    return db
-  }
-
   return db
 }
 

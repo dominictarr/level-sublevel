@@ -1,6 +1,7 @@
-var Hooks  = require('level-hooks')
+var Hooks        = require('level-hooks')
 var EventEmitter = require('events').EventEmitter
-var inherits = require('util').inherits
+var inherits     = require('util').inherits
+var ranges       = require('string-range')
 
 inherits(SubDB, EventEmitter)
 
@@ -117,15 +118,12 @@ function root(db) {
   return root(db._parent)
 }
 
-SDB.pre = function (hook) {
+SDB.pre = function (range, hook) {
+  if(!hook) hook = range, range = null
+  range = ranges.prefix(range, this.prefix(), this._sep)
   var r = root(this._parent)
   var p = this.prefix()
-
-  r.hooks.pre({
-    start: p,
-    end  : p + this._sep
-  }
-  , function (ch, add) {
+  r.hooks.pre(range, function (ch, add) {
     hook({
       key: ch.key.substring(p.length),
       value: ch.value,
@@ -137,14 +135,13 @@ SDB.pre = function (hook) {
   return this
 }
 
-SDB.post = function (hook) {
+SDB.post = function (range, hook) {
+  if(!hook) hook = range, range = null
   var r = root(this._parent)
   var p = this.prefix()
-  r.hooks.post({
-    start: p,
-    end  : p + this._sep
-  }
-  , function (data) {
+  range = ranges.prefix(range, p, this._sep)
+  console.log('posthook range', range)
+  r.hooks.post(range, function (data) {
     hook({key: data.key.substring(p.length), value: data.value, type: data.type})
   })
   return this
