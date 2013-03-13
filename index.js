@@ -38,6 +38,14 @@ module.exports   = function (db, sep) {
     return db.hooks.post(range, hook)
   }
 
+  var createReadStream = db.createReadStream
+
+  db.createReadStream = function (opts) {
+    opts = opts || {}
+    if(!opts.end && !opts.start)
+      opts.end = sep
+    return createReadStream.call(db, opts)
+  }
 
   var batch = db.batch
   db.batch = function (changes, opts, cb) {
