@@ -58,7 +58,7 @@ test('sublevel - prefixed batches', function (t) {
     {key: 'd', value: 4, type: 'put', prefix: a},
     {key: 'e', value: 5, type: 'put', prefix: base},
   ], function (err) {
-    base.createReadStream()
+    base.createReadStream({end: '\xff\xff'})
       .on('data', function (ch) {
         obj[ch.key] = ch.value
       })
@@ -98,7 +98,7 @@ test('sublevel - prefixed batches on subsection', function (t) {
     {key: 'd', value: 4, type: 'put'},
     {key: 'e', value: 5, type: 'put', prefix: base},
   ], function (err) {
-    base.createReadStream()
+    base.createReadStream({end: '\xff\xff'})
       .on('data', function (ch) {
         obj[ch.key] = ch.value
       })

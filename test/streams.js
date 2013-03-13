@@ -14,7 +14,7 @@ require('tape')('sublevel', function (t) {
 
     function all(db, cb) {
       var o = {}
-      db.createReadStream().on('data', function (data) {
+      db.createReadStream({end: '\xff\xff'}).on('data', function (data) {
         o[data.key.toString()] = data.value.toString()
       })
       .on('end', function () {
