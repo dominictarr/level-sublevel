@@ -2,13 +2,16 @@
 
 Separate sections of levelup, with hooks!
 
+This module allows you to create seperate sections of a
+[levelup](https://github.com/rvagg/node-levelup) database,
+kinda like tables in an sql database, but evented, and ranged,
+for real-time changing data.
+
 ## Stability
 
 Unstable: Expect patches and features, possible api changes.
 
-## Status - Experimental
-
-Anticipate Breaking Changes - please provide feedback.
+This is module is working well, but may change in the future as it's use is futher explored.
 
 ## Example
 
