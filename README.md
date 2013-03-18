@@ -2,6 +2,10 @@
 
 Separate sections of levelup, with hooks!
 
+## Stability
+
+Unstable: Expect patches and features, possible api changes.
+
 ## Status - Experimental
 
 Anticipate Breaking Changes - please provide feedback.
