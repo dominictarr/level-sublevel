@@ -19,10 +19,10 @@ function SubDB (db, prefix, sep) {
   var self = this
   this.hooks = {
     pre: function () {
-      self.pre.apply(self, arguments)
+      return self.pre.apply(self, arguments)
     },
     post: function () {
-      self.pre.apply(self, arguments)
+      return self.pre.apply(self, arguments)
     }
   }
 }
@@ -123,7 +123,7 @@ SDB.pre = function (range, hook) {
   range = ranges.prefix(range, this.prefix(), this._sep)
   var r = root(this._parent)
   var p = this.prefix()
-  r.hooks.pre(range, function (ch, add) {
+  return r.hooks.pre(range, function (ch, add) {
     hook({
       key: ch.key.substring(p.length),
       value: ch.value,
@@ -132,7 +132,6 @@ SDB.pre = function (range, hook) {
       add(ch, _p || p)
     })
   })
-  return this
 }
 
 SDB.post = function (range, hook) {
@@ -141,10 +140,9 @@ SDB.post = function (range, hook) {
   var p = this.prefix()
   range = ranges.prefix(range, p, this._sep)
   console.log('posthook range', range)
-  r.hooks.post(range, function (data) {
+  return r.hooks.post(range, function (data) {
     hook({key: data.key.substring(p.length), value: data.value, type: data.type})
   })
-  return this
 }
 
 var exports = module.exports = SubDB
