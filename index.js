@@ -34,7 +34,6 @@ module.exports   = function (db, sep) {
         start: '',
         end  : sep
       }
-    console.log('--posthook range', range)
     return db.hooks.post(range, hook)
   }
 
