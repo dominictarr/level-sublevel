@@ -1,4 +1,3 @@
-var Hooks        = require('level-hooks')
 var EventEmitter = require('events').EventEmitter
 var inherits     = require('util').inherits
 var ranges       = require('string-range')
@@ -6,12 +5,10 @@ var ranges       = require('string-range')
 inherits(SubDB, EventEmitter)
 
 function SubDB (db, prefix, sep) {
-  if(!(this instanceof SubDB)) return new SubDB(db, prefix)
+  if(!(this instanceof SubDB)) return new SubDB(db, prefix, sep)
   if(!db)     throw new Error('must provide db')
   if(!prefix) throw new Error('must provide prefix')
-
-  Hooks(db)
-
+  
   this._parent = db
   this._sep = sep || '\xff'
   this._prefix = prefix
@@ -22,7 +19,7 @@ function SubDB (db, prefix, sep) {
       return self.pre.apply(self, arguments)
     },
     post: function () {
-      return self.pre.apply(self, arguments)
+      return self.post.apply(self, arguments)
     }
   }
 }
