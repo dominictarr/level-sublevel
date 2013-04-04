@@ -1,6 +1,7 @@
 var EventEmitter = require('events').EventEmitter
 var next         = process.nextTick
 var SubDb        = require('./sub')
+var fixRange     = require('level-fix-range')
 
 var Hooks   = require('level-hooks')
 
@@ -22,8 +23,7 @@ module.exports   = function (db, sep) {
   db.pre = function (range, hook) {
     if(!hook)
       hook = range, range = {
-        start: '',
-        end  : sep
+        max  : sep
       }
     return db.hooks.pre(range, hook)
   }
@@ -31,21 +31,26 @@ module.exports   = function (db, sep) {
   db.post = function (range, hook) {
     if(!hook)
       hook = range, range = {
-        start: '',
-        end  : sep
+        max : sep
       }
     return db.hooks.post(range, hook)
   }
 
-  var createReadStream = db.createReadStream
-
-  db.createReadStream = function (opts) {
-    opts = opts || {}
-    if(!opts.end && !opts.start)
-      opts.end = sep
-    return createReadStream.call(db, opts)
+  function safeRange(fun) {
+    return function (opts) {
+      opts = opts || {}
+      if((!opts.end && !opts.start) || (!opts.min && !opts.max))
+        opts.max = sep
+      fixRange(opts)
+      console.log(opts)
+      return fun.call(db, opts)
+    }
   }
 
+  db.createReadStream  = safeRange(db.createReadStream)
+  db.createKeyStream   = safeRange(db.createKeyStream)
+  db.createValueStream = safeRange(db.createValueStream)
+  
   var batch = db.batch
   db.batch = function (changes, opts, cb) {
     changes.forEach(function (e) {
