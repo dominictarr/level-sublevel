@@ -82,8 +82,10 @@ SDB.createReadStream = function (opts) {
   opts = opts || {}
   var r = root(this)
   var p = this.prefix()
-  opts.start = p + (opts.start || '')
-  opts.end = p + (opts.end || this._sep)
+  //opts.start = p + (opts.start || '')
+  //opts.end = p + (opts.end || this._sep)
+  opts = ranges.prefix(opts, p)
+
   return r.createReadStream(opts)
     .on('data', function (d) {
       //mutate the prefix!
