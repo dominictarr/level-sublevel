@@ -42,7 +42,6 @@ module.exports   = function (db, sep) {
       if((!opts.end && !opts.start) || (!opts.min && !opts.max))
         opts.max = sep
       fixRange(opts)
-      console.log(opts)
       return fun.call(db, opts)
     }
   }

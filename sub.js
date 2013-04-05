@@ -137,7 +137,6 @@ SDB.post = function (range, hook) {
   var r = root(this._parent)
   var p = this.prefix()
   range = ranges.prefix(range, p, this._sep)
-  console.log('posthook range', range)
   return r.hooks.post(fixRange(range), function (data) {
     hook({key: data.key.substring(p.length), value: data.value, type: data.type})
   })
