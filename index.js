@@ -39,9 +39,11 @@ module.exports   = function (db, sep) {
   function safeRange(fun) {
     return function (opts) {
       opts = opts || {}
-      if((!opts.end && !opts.start) || (!opts.min && !opts.max))
-        opts.max = sep
       fixRange(opts)
+
+      if(opts.reverse) opts.start = opts.start || sep
+      else             opts.end   = opts.end || sep
+
       return fun.call(db, opts)
     }
   }
