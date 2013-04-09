@@ -13,7 +13,7 @@
     "level-fix-range": "~1.1.2"
   },
   "devDependencies": {
-    "levelup": "git://github.com/dominictarr/node-levelup.git#installable-reverse",
+    "levelup": "~0.7.0",
     "rimraf": "~2.1.4",
     "tape": "~0.2.2",
     "shasum": "0.0.2"
