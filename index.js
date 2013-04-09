@@ -6,6 +6,8 @@ var fixRange     = require('level-fix-range')
 var Hooks   = require('level-hooks')
 
 module.exports   = function (db, sep) {
+  if (db.sublevel) return db
+
   //use \xff (255) as the seperator,
   //so that sections of the database will sort after the regular keys
   sep = sep || '\xff'
