@@ -20,6 +20,8 @@ module.exports   = function (db, sep) {
     return new SubDb(db, prefix, sep)
   }
 
+  db.methods = {}
+
   db.prefix = function (key) {
     return '' + (key || '')
   }

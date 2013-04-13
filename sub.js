@@ -16,6 +16,7 @@ function SubDB (db, prefix, sep) {
   this._root = root(this)
   db.sublevels[prefix] = this
   this.sublevels = {}
+  this.methods = {}
   var self = this
   this.hooks = {
     pre: function () {
