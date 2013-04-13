@@ -14,6 +14,8 @@ module.exports   = function (db, sep) {
 
   Hooks(db)
 
+  db.sublevels = {}
+
   db.sublevel = function (prefix) {
     return new SubDb(db, prefix, sep)
   }

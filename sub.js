@@ -14,6 +14,8 @@ function SubDB (db, prefix, sep) {
   this._sep = sep || '\xff'
   this._prefix = prefix
   this._root = root(this)
+  db.sublevels[prefix] = this
+  this.sublevels = {}
   var self = this
   this.hooks = {
     pre: function () {
