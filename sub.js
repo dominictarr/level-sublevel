@@ -82,7 +82,7 @@ SDB.createValueStream = function (opts) {
   return this.createReadStream(opts)
 }
 
-SDM.readStream = 
+SDB.readStream = 
 SDB.createReadStream = function (opts) {
   opts = opts || {}
   var r = root(this)
