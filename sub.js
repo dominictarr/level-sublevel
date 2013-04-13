@@ -68,18 +68,21 @@ SDB.prefix = function (key) {
   return this._parent.prefix() + this._sep + this._prefix + this._sep + (key || '')
 }
 
+SDB.keyStream =
 SDB.createKeyStream = function (opts) {
   opts = opts || {}
   opts.keys = true
   return this.createReadStream(opts)
 }
 
+SDB.valueStream =
 SDB.createValueStream = function (opts) {
   opts = opts || {}
-  opts.keys = true
+  opts.values = true
   return this.createReadStream(opts)
 }
 
+SDM.readStream = 
 SDB.createReadStream = function (opts) {
   opts = opts || {}
   var r = root(this)
@@ -98,6 +101,7 @@ SDB.createReadStream = function (opts) {
 }
 
 
+SDB.writeStream =
 SDB.createWriteStream = function () {
   var r = root(this)
   var p = this.prefix()

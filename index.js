@@ -52,8 +52,11 @@ module.exports   = function (db, sep) {
     }
   }
 
+  db.readStream =
   db.createReadStream  = safeRange(db.createReadStream)
+  db.keyStream =
   db.createKeyStream   = safeRange(db.createKeyStream)
+  db.valuesStream =
   db.createValueStream = safeRange(db.createValueStream)
   
   var batch = db.batch
