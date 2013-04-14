@@ -14,8 +14,13 @@ test('subsections', function (t) {
   t.deepEqual(base.sublevels, {foo: foo, bar: bar})
   t.deepEqual(foo.sublevels, {})
 
+  t.strictEqual(base.sublevel('foo'), foo)
+  t.strictEqual(base.sublevel('bar'), bar)
+
   var fooBlerg = foo.sublevel('blerg')
   t.deepEqual(foo.sublevels, {blerg: fooBlerg})
+
+  t.strictEqual(foo.sublevel('blerg'), fooBlerg)
 
   t.end()
 })
