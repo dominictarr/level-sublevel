@@ -38,6 +38,8 @@ SDB._key = function (key) {
 }
 
 SDB.sublevel = function (prefix) {
+  if(this.sublevels[prefix])
+    return this.sublevels[prefix]
   return new SubDB(this, prefix, this._sep)
 }
 

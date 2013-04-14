@@ -17,6 +17,8 @@ module.exports   = function (db, sep) {
   db.sublevels = {}
 
   db.sublevel = function (prefix) {
+    if(db.sublevels[prefix])
+      return db.sublevels[prefix]
     return new SubDb(db, prefix, sep)
   }
 
