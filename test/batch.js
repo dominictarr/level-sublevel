@@ -128,6 +128,7 @@ test('sublevel - prefixed batches on subsection - strings', function (t) {
 
   var a    = base.sublevel('A')
   var b    = base.sublevel('B')
+  var b_c    = b.sublevel('C')
 
   var obj = {}
 
@@ -137,18 +138,21 @@ test('sublevel - prefixed batches on subsection - strings', function (t) {
     {key: 'c', value: 3, type: 'put', prefix: base.prefix()},
     {key: 'd', value: 4, type: 'put'},
     {key: 'e', value: 5, type: 'put', prefix: base.prefix()},
+    {key: 'f', value: 6, type: 'put', prefix: b_c.prefix()},
   ], function (err) {
     base.createReadStream({end: '\xff\xff'})
       .on('data', function (ch) {
         obj[ch.key] = ch.value
       })
       .on('end', function () {
+        console.log('D?', obj)
         t.deepEqual(obj, {
           'a': '1',
           'c': '3',
           'e': '5',
           '~A~d': '4',
-          '~B~b': '2'
+          '~B~b': '2',
+          '~B~~C~f': '6'
         })
         console.log(obj)
         t.end()
