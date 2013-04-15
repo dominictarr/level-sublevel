@@ -67,8 +67,10 @@ module.exports   = function (db, sep) {
   db.batch = function (changes, opts, cb) {
     changes.forEach(function (e) {
       if(e.prefix) {
-        if(e.prefix && 'function' === typeof e.prefix.prefix)
+        if('function' === typeof e.prefix.prefix)
           e.key = e.prefix.prefix(e.key)
+        else if('string'  === typeof e.prefix)
+          e.key = e.prefix + e.key
       }
     })
     batch.call(db, changes, opts, cb)
