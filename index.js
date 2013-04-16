@@ -10,7 +10,7 @@ module.exports   = function (db, sep) {
 
   //use \xff (255) as the seperator,
   //so that sections of the database will sort after the regular keys
-  sep = sep || '\xff'
+  this._sep = sep = sep || '\xff'
 
   Hooks(db)
 
