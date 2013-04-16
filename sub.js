@@ -142,7 +142,9 @@ SDB.pre = function (range, hook) {
       value: ch.value,
       type: ch.type
     }, function (ch, _p) {
-      add(ch, _p || p)
+      //maybe remove the second add arg now
+      //that op can have prefix?
+      add(ch, ch.prefix ? _p : (_p || p))
     })
   })
 }
