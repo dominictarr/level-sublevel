@@ -63,7 +63,6 @@ SDB.batch = function (changes, opts, cb) {
   changes.forEach(function (ch) {
     //OH YEAH, WE NEED TO VALIDATE THAT UPDATING THIS KEY/PREFIX IS ALLOWED
     if('string' === typeof ch.prefix) {
-      console.log(ch.prefix, ch.key)
       ch.key = ch.prefix + ch.key
     } else
     ch.key = (ch.prefix || self).prefix(ch.key)

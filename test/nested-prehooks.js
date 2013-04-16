@@ -8,8 +8,8 @@ require('tape')('sublevel', function (t) {
 
     Sublevel(base, '~')
 
-    var a    = base.sublevel('A')
-    var a_a    = a.sublevel('A')
+    var a   = base.sublevel('A')
+    var a_a = a.sublevel('A')
 
     var as = {}
     var aas = {}
