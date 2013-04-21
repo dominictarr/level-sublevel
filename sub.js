@@ -37,10 +37,10 @@ SDB._key = function (key) {
     + key
 }
 
-SDB.sublevel = function (prefix) {
+SDB.sublevel = function (prefix, sep) {
   if(this.sublevels[prefix])
     return this.sublevels[prefix]
-  return new SubDB(this, prefix, this._sep)
+  return new SubDB(this, prefix, sep || this._sep)
 }
 
 SDB.put = function (key, value, opts, cb) {

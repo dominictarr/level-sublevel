@@ -10,16 +10,16 @@ module.exports   = function (db, sep) {
 
   //use \xff (255) as the seperator,
   //so that sections of the database will sort after the regular keys
-  this._sep = sep = sep || '\xff'
+  db._sep = sep = sep || '\xff'
 
   Hooks(db)
 
   db.sublevels = {}
 
-  db.sublevel = function (prefix) {
+  db.sublevel = function (prefix, sep) {
     if(db.sublevels[prefix])
       return db.sublevels[prefix]
-    return new SubDb(db, prefix, sep)
+    return new SubDb(db, prefix, sep || this._sep)
   }
 
   db.methods = {}
