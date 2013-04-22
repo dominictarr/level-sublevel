@@ -13,10 +13,11 @@
     "level-fix-range": "~1.1.2"
   },
   "devDependencies": {
-    "levelup": "~0.7.0",
+    "levelup": "~0.8.0",
     "rimraf": "~2.1.4",
     "tape": "~0.2.2",
-    "shasum": "0.0.2"
+    "shasum": "0.0.2",
+    "monotonic-timestamp": "0.0.8"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
