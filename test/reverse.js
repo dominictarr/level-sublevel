@@ -15,7 +15,7 @@ function makeTest(db, name) {
 
   test(name, function (t) {
 
-    t.plan(10)
+    t.plan(19)
 
     var docs = {
       a: 'apple',
@@ -25,6 +25,11 @@ function makeTest(db, name) {
       e: 'elder-berry'
     }
 
+    function order(a, b) {
+      t.deepEqual(a, b)
+      t.equal(JSON.stringify(a), JSON.stringify(b))
+    }
+
     db.batch(Object.keys(docs).map(function (key) {
       console.log(key, docs[key])
       return {key: key, value: docs[key], type: 'put'}
@@ -32,11 +37,11 @@ function makeTest(db, name) {
       t.notOk(err) 
 
       all(db, {}, function (err, all) {
-        t.deepEqual(all, docs)
+        order(all, docs)
       })
 
       all(db, {min: 'a~'}, function (err, all) {
-        t.deepEqual(all, {
+        order(all, {
           b: 'banana',
           c: 'cherry',
           d: 'durian',
@@ -45,7 +50,7 @@ function makeTest(db, name) {
       })
 
       all(db, {min: 'b'}, function (err, all) {
-        t.deepEqual(all, {
+        order(all, {
           b: 'banana',
           c: 'cherry',
           d: 'durian',
@@ -55,31 +60,31 @@ function makeTest(db, name) {
 
 
       all(db, {min: 'a~', reverse: true}, function (err, all) {
-        t.deepEqual(all, {
-          b: 'banana',
-          c: 'cherry',
+        order(all, {
+          e: 'elder-berry',
           d: 'durian',
-          e: 'elder-berry'
+          c: 'cherry',
+          b: 'banana'
         })
       })
 
       all(db, {min: 'c~', reverse: true}, function (err, all) {
         console.log(all)
-        t.deepEqual(all, {
-          d: 'durian',
-          e: 'elder-berry'
+        order(all, {
+          e: 'elder-berry',
+          d: 'durian'
         })
       })
 
       all(db, {min: 'c~', max: 'd~'}, function (err, all) {
         console.log(all)
-        t.deepEqual(all, {
+        order(all, {
           d: 'durian',
         })
       })
 
       all(db, {min: 'a~'}, function (err, all) {
-        t.deepEqual(all, {
+        order(all, {
           b: 'banana',
           c: 'cherry',
           d: 'durian',
@@ -88,8 +93,8 @@ function makeTest(db, name) {
       })
 
       all(db, {min: 'c~'}, function (err, all) {
-        console.log(all)
-        t.deepEqual(all, {
+        console.log('d, e', all)
+        order(all, {
           d: 'durian',
           e: 'elder-berry'
         })
@@ -97,7 +102,7 @@ function makeTest(db, name) {
 
       all(db, {min: 'c~', max: 'd~', reverse: true}, function (err, all) {
         console.log(all)
-        t.deepEqual(all, {
+        order(all, {
           d: 'durian',
         })
       })
