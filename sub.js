@@ -96,9 +96,10 @@ SDB.createReadStream = function (opts) {
   var p = this.prefix()
   //opts.start = p + (opts.start || '')
   //opts.end = p + (opts.end || this._sep)
-  opts = ranges.prefix(opts, p)
-
-  return r.createReadStream(opts)
+  
+  var _opts = ranges.prefix(opts, p)
+  _opts.reverse = opts.reverse
+  return r.createReadStream(_opts)
     .on('data', function (d) {
       //mutate the prefix!
       //this doesn't work for createKeyStream admittedly.
