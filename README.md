@@ -56,9 +56,10 @@ db.pre(function (ch, add) {
   add({
     key: ''+Date.now(), 
     value: ch.key, 
-    type: 'put'
-  }, sub) //NOTE pass the destination db to add
-          //and the value will end up in that subsection!
+    type: 'put',
+    prefix: sub //NOTE pass the destination db to add
+               //and the value will end up in that subsection!
+  })
 })
 
 db.put('key', 'VALUE', function (err) {
