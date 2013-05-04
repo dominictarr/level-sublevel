@@ -104,10 +104,10 @@ function makeTest(db, name) {
 
 
 
-require('rimraf').sync('/tmp/test-sublevel-reverse')
+require('rimraf').sync('/tmp/test-sublevel-limit')
 
 var base = require('../')
-  (require('levelup')('/tmp/test-sublevel-reverse'))
+  (require('levelup')('/tmp/test-sublevel-limit'))
 var A = base.sublevel('A')
 makeTest(base, 'simple')
 
