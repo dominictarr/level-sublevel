@@ -99,6 +99,8 @@ SDB.createReadStream = function (opts) {
   
   var _opts = ranges.prefix(opts, p)
   _opts.reverse = opts.reverse
+  _opts.limit = opts.limit
+  _opts.fillCache = opts.fillCache
   return r.createReadStream(_opts)
     .on('data', function (d) {
       //mutate the prefix!
