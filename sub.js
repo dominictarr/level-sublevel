@@ -79,12 +79,14 @@ SDB.keyStream =
 SDB.createKeyStream = function (opts) {
   opts = opts || {}
   opts.keys = true
+  opts.values = false
   return this.createReadStream(opts)
 }
 
 SDB.valueStream =
 SDB.createValueStream = function (opts) {
   opts = opts || {}
+  opts.keys = false
   opts.values = true
   return this.createReadStream(opts)
 }
@@ -92,20 +94,32 @@ SDB.createValueStream = function (opts) {
 SDB.readStream = 
 SDB.createReadStream = function (opts) {
   opts = opts || {}
+  var _opts = {}
+  Object.keys(opts).forEach(function (k) {
+    _opts[k] = opts[k]
+  })
   var r = root(this)
   var p = this.prefix()
   //opts.start = p + (opts.start || '')
   //opts.end = p + (opts.end || this._sep)
-  
-  var _opts = ranges.prefix(opts, p)
-  _opts.reverse = opts.reverse
-  return r.createReadStream(_opts)
-    .on('data', function (d) {
-      //mutate the prefix!
-      //this doesn't work for createKeyStream admittedly.
-      if(d.key)
-        d.key = d.key.substring(p.length)
-    })
+  var prefixedRange = ranges.prefix(opts, p)
+  Object.keys(prefixedRange).forEach(function (k) {
+    _opts[k] = prefixedRange[k]
+  })
+  if (typeof _opts.keys === 'undefined') _opts.keys = true
+  if (typeof _opts.values === 'undefined') _opts.values = true
+
+  var s = r.createReadStream(_opts)
+  var _makeData = s._makeData
+  s._makeData = function (key, value) {
+    var d = _makeData(key, value)
+    // mutate the prefix!
+    if (_opts.keys && _opts.values) d.key = d.key.substring(p.length)
+    else if (_opts.keys) d = d.substring(p.length)
+    return d
+  }
+
+  return s
 }
 
 
