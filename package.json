@@ -8,12 +8,12 @@
     "url": "git://github.com/dominictarr/level-sublevel.git"
   },
   "dependencies": {
-    "level-hooks": "~4.1.6",
+    "level-hooks": "~4.1.10",
     "string-range": "~1.2.1",
     "level-fix-range": "~1.1.2"
   },
   "devDependencies": {
-    "levelup": "~0.8.0",
+    "level": "~0.9.0",
     "rimraf": "~2.1.4",
     "tape": "~0.2.2",
     "shasum": "0.0.2",
