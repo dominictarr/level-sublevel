@@ -1,7 +1,7 @@
 "use strict";
 
 var test = require('tape')
-var LevelUp = require('levelup');
+var LevelUp = require('level');
 var Sublevel = require('../');
 var timestamp = require('monotonic-timestamp')
 

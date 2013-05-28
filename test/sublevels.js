@@ -1,5 +1,5 @@
 require('rimraf').sync('/tmp/test-sublevels')
-var levelup = require('levelup')
+var levelup = require('level')
 
 var base = require('../')(levelup('/tmp/test-sublevels'))
 

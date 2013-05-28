@@ -4,7 +4,7 @@ require('tape')('insert in prehook', function (t) {
 
   require('rimraf').sync('/tmp/test-sublevel')
 
-  var base = Sublevel(require('levelup')('/tmp/test-sublevel'))
+  var base = Sublevel(require('level')('/tmp/test-sublevel'))
 
   Sublevel(base, '~')
 
@@ -38,7 +38,7 @@ require('tape')('insert in prehook 2', function (t) {
 
   require('rimraf').sync('/tmp/test-sublevel2')
 
-  var base = Sublevel(require('levelup')('/tmp/test-sublevel2'))
+  var base = Sublevel(require('level')('/tmp/test-sublevel2'))
 
   Sublevel(base, '~')
 
