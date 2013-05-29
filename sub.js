@@ -45,17 +45,14 @@ SDB.sublevel = function (prefix, sep) {
 
 SDB.put = function (key, value, opts, cb) {
   this._root.put(this.prefix(key), value, opts, cb)
-//  this._parent.put(this._key(key), value, opts, cb)
 }
 
 SDB.get = function (key, opts, cb) {
   this._root.get(this.prefix(key), opts, cb)
-//  this._parent.get(this._key(key), opts, cb)
 }
 
 SDB.del = function (key, opts, cb) {
   this._root.del(this.prefix(key), opts, cb)
-//  this._parent.del(this._key(key), opts, cb)
 }
 
 SDB.batch = function (changes, opts, cb) {
@@ -86,6 +83,7 @@ SDB.createKeyStream = function (opts) {
 SDB.valueStream =
 SDB.createValueStream = function (opts) {
   opts = opts || {}
+  opts.keys = false
   opts.values = true
   opts.keys = false
   return this.createReadStream(opts)
@@ -94,11 +92,13 @@ SDB.createValueStream = function (opts) {
 SDB.readStream = 
 SDB.createReadStream = function (opts) {
   opts = opts || {}
+  var _opts = {}
+  Object.keys(opts).forEach(function (k) {
+    _opts[k] = opts[k]
+  })
   var r = root(this)
   var p = this.prefix()
-  //opts.start = p + (opts.start || '')
-  //opts.end = p + (opts.end || this._sep)
-  
+
   var _opts = ranges.prefix(opts, p)
   _opts.reverse = opts.reverse
 
@@ -109,16 +109,17 @@ SDB.createReadStream = function (opts) {
 
   var s = r.createReadStream(_opts)
 
-  if(!_opts.values) {
+  if(_opts.values === false) {
     var emit = s.emit
     s.emit = function (event, val) {
-      if(event === 'data')
+      if(event === 'data') {
+        console.log(event, val, _opts)
         emit.call(this, 'data', val.substring(p.length))
-      else
+      } else
         emit.call(this, event, val)
     }
     return s
-  } else if(!_opts.keys)
+  } else if(_opts.keys === false)
     return s
   else
     return s.on('data', function (d) {
