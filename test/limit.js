@@ -103,11 +103,10 @@ function makeTest(db, name) {
 }
 
 
+var levelup = require('level-test')()
 
-require('rimraf').sync('/tmp/test-sublevel-limit')
+var base = require('../')(levelup('test-sublevel-limit'))
 
-var base = require('../')
-  (require('levelup')('/tmp/test-sublevel-limit'))
 var A = base.sublevel('A')
 makeTest(base, 'simple')
 

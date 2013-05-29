@@ -1,8 +1,9 @@
 var test = require('tape')
 var SubLevel = require('../')
+var levelup = require('level-test')()
 
-require('rimraf').sync('/tmp/test-sublevel')
-var base = SubLevel(require('levelup')('/tmp/test-sublevel'))
+var base = SubLevel(levelup('test-sublevel'))
+
 var sub = base.sublevel('fruit')
 
 var docs = {
@@ -65,3 +66,4 @@ test('sublevel - key/value options', function (t) {
     })()
   })
 })
+
