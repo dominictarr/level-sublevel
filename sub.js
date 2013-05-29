@@ -79,6 +79,7 @@ SDB.keyStream =
 SDB.createKeyStream = function (opts) {
   opts = opts || {}
   opts.keys = true
+  opts.values = false
   return this.createReadStream(opts)
 }
 
@@ -86,6 +87,7 @@ SDB.valueStream =
 SDB.createValueStream = function (opts) {
   opts = opts || {}
   opts.values = true
+  opts.keys = false
   return this.createReadStream(opts)
 }
 
@@ -99,12 +101,30 @@ SDB.createReadStream = function (opts) {
   
   var _opts = ranges.prefix(opts, p)
   _opts.reverse = opts.reverse
-  return r.createReadStream(_opts)
-    .on('data', function (d) {
+
+  for(var k in opts) {
+    if(_opts[k] == null)
+      _opts[k] = opts[k]
+  }
+
+  var s = r.createReadStream(_opts)
+
+  if(!_opts.values) {
+    var emit = s.emit
+    s.emit = function (event, val) {
+      if(event === 'data')
+        emit.call(this, 'data', val.substring(p.length))
+      else
+        emit.call(this, event, val)
+    }
+    return s
+  } else if(!_opts.keys)
+    return s
+  else
+    return s.on('data', function (d) {
       //mutate the prefix!
       //this doesn't work for createKeyStream admittedly.
-      if(d.key)
-        d.key = d.key.substring(p.length)
+      d.key = d.key.substring(p.length)
     })
 }
 
