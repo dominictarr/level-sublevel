@@ -1,7 +1,7 @@
 {
   "name": "level-sublevel",
   "description": "",
-  "version": "4.6.5",
+  "version": "4.6.6",
   "homepage": "https://github.com/dominictarr/level-sublevel",
   "repository": {
     "type": "git",
@@ -17,7 +17,11 @@
     "rimraf": "~2.1.4",
     "tape": "~0.2.2",
     "shasum": "0.0.2",
-    "monotonic-timestamp": "0.0.8"
+    "monotonic-timestamp": "0.0.8",
+    "pull-stream": "~2.18.2",
+    "pull-level": "~1.1.1",
+    "level-test": "~1.1.1",
+    "stream-to-pull-stream": "~1.2.0"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
