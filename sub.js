@@ -95,6 +95,7 @@ SDB.keyStream =
 SDB.createKeyStream = function (opts) {
   opts = opts || {}
   opts.keys = true
+  opts.values = false
   return this.createReadStream(opts)
 }
 
@@ -102,15 +103,18 @@ SDB.valueStream =
 SDB.createValueStream = function (opts) {
   opts = opts || {}
   opts.values = true
+  opts.keys = false
   return this.createReadStream(opts)
 }
 
 function selectivelyMerge(_opts, opts) {
   [ 'valueEncoding'
   , 'reverse'
+  , 'values'
+  , 'keys'
   ]
   .forEach(function (k) {
-    if (opts[k]) _opts[k] = opts[k]        
+    if (opts.hasOwnProperty(k)) _opts[k] = opts[k]        
   })
 }
 
@@ -132,6 +136,7 @@ SDB.createReadStream = function (opts) {
       //this doesn't work for createKeyStream admittedly.
       if(d.key)
         d.key = d.key.substring(p.length)
+
     })
 }
 
