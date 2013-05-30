@@ -24,7 +24,7 @@ test('sublevel - batch', function (t) {
 
   var Sublevel = require('../')
 
-  Sublevel(base, '~')
+  Sublevel(base, { sep: '~' })
 
   var a    = base.sublevel('A')
   var b    = base.sublevel('B')
@@ -60,7 +60,7 @@ test('sublevel - prefixed batches', function (t) {
 
   var Sublevel = require('../')
 
-  Sublevel(base, '~')
+  Sublevel(base, { sep: '~' })
 
   var a    = base.sublevel('A')
   var b    = base.sublevel('B')
@@ -93,7 +93,7 @@ test('sublevel - prefixed batches on subsection', function (t) {
 
   var Sublevel = require('../')
 
-  Sublevel(base, '~')
+  Sublevel(base, { sep: '~' })
 
   var a    = base.sublevel('A')
   var b    = base.sublevel('B')
@@ -126,7 +126,7 @@ test('sublevel - prefixed batches on subsection - strings', function (t) {
 
   var Sublevel = require('../')
 
-  Sublevel(base, '~')
+  Sublevel(base, { sep: '~' })
 
   var a    = base.sublevel('A')
   var b    = base.sublevel('B')
