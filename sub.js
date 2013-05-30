@@ -140,7 +140,6 @@ SDB.createReadStream = function (opts) {
     var emit = s.emit
     s.emit = function (event, val) {
       if(event === 'data') {
-        console.log(event, val, _opts)
         emit.call(this, 'data', val.substring(p.length))
       } else
         emit.call(this, event, val)
