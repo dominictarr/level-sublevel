@@ -109,9 +109,13 @@ SDB.createValueStream = function (opts) {
 
 function selectivelyMerge(_opts, opts) {
   [ 'valueEncoding'
+  , 'encoding'
+  , 'keyEncoding'
   , 'reverse'
   , 'values'
   , 'keys'
+  , 'limit'
+  , 'fillCache'
   ]
   .forEach(function (k) {
     if (opts.hasOwnProperty(k)) _opts[k] = opts[k]        
