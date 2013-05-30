@@ -1,10 +1,10 @@
 var test = require('tape')
+var level = require('level-test')()
 var SubLevel = require('../')
 
 test('sublevel - batch', function (t) {
 
-  require('rimraf').sync('/tmp/test-sublevel')
-  var base = SubLevel(require('level')('/tmp/test-sublevel'))
+  var base = SubLevel(level('test-sublevel'))
 
   var lc = [], uc = []
 
@@ -33,8 +33,7 @@ test('sublevel - batch', function (t) {
 
 test('sublevel - post hook rang on sublevel', function (t) {
 
-  require('rimraf').sync('/tmp/test-sublevel')
-  var db = SubLevel(require('level')('/tmp/test-sublevel2'))
+  var db = SubLevel(level('test-sublevel2'))
   var base = db.sublevel('stuff')
 
   var lc = [], uc = []

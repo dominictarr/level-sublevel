@@ -1,4 +1,6 @@
 var test = require('tape')
+var level = require('level-test')()
+var base = require('../')(level('test-sublevel-reverse'))
 
 function all (db, range, cb) {
   var o = {}
@@ -110,12 +112,6 @@ function makeTest(db, name) {
   })
 }
 
-
-
-require('rimraf').sync('/tmp/test-sublevel-reverse')
-
-var base = require('../')
-  (require('level')('/tmp/test-sublevel-reverse'))
 var A = base.sublevel('A')
 makeTest(base, 'simple')
 

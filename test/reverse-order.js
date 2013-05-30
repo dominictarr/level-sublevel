@@ -1,11 +1,11 @@
 "use strict";
 
 var test = require('tape')
-var LevelUp = require('level');
+var LevelUp = require('level-test')();
 var Sublevel = require('../');
 var timestamp = require('monotonic-timestamp')
 
-var db = Sublevel( LevelUp('/tmp/test-level-sublevel_myDB', {valueEncoding: 'json'}) );
+var db = Sublevel( LevelUp('test-level-sublevel_myDB', {valueEncoding: 'json'}) );
 var groups = db.sublevel('groups');
 var topics = db.sublevel('topics');
 

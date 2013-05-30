@@ -1,9 +1,10 @@
+var level = require('level-test')()
 
 require('tape')('sublevel', function (t) {
 
   require('rimraf').sync('/tmp/test-sublevel-readstream')
 
-  var base = require('level')('/tmp/test-sublevel-readstream', function () {
+  var base = level('test-sublevel-readstream', function () {
     var Sublevel = require('../')
 
     Sublevel(base, { sep: '~' })

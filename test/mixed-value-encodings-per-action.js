@@ -1,6 +1,5 @@
-var levelup = require('level')
-var base = require('../')(levelup('/tmp/test-mixed-value-encodings-per-put'))
-require('rimraf').sync('/tmp/test-mixed-value-encodings-per-put')
+var levelup = require('level-test')()
+var base = require('../')(levelup('test-mixed-value-encodings-per-put'))
 
 var test = require('tape')
 

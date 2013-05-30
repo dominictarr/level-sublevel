@@ -1,7 +1,6 @@
-require('rimraf').sync('/tmp/test-sublevels')
-var levelup = require('level')
+var levelup = require('level-test')()
 
-var base = require('../')(levelup('/tmp/test-sublevels'))
+var base = require('../')(levelup('test-sublevels'))
 
 var test = require('tape')
 

@@ -1,4 +1,5 @@
 var test = require('tape')
+var level = require('level-test')()
 
 function all (db, cb) {
   var obj = {}, fin = false
@@ -19,8 +20,7 @@ function all (db, cb) {
 
 test('sublevel - batch', function (t) {
 
-  require('rimraf').sync('/tmp/test-sublevel')
-  var base = require('level')('/tmp/test-sublevel')
+  var base = level('test-sublevel')
 
   var Sublevel = require('../')
 
@@ -55,8 +55,7 @@ test('sublevel - batch', function (t) {
 
 test('sublevel - prefixed batches', function (t) {
 
-  require('rimraf').sync('/tmp/test-sublevel2')
-  var base = require('level')('/tmp/test-sublevel2')
+  var base = level('test-sublevel2')
 
   var Sublevel = require('../')
 
@@ -88,8 +87,7 @@ test('sublevel - prefixed batches', function (t) {
 
 test('sublevel - prefixed batches on subsection', function (t) {
 
-  require('rimraf').sync('/tmp/test-sublevel3')
-  var base = require('level')('/tmp/test-sublevel3')
+  var base = level('test-sublevel3')
 
   var Sublevel = require('../')
 
@@ -121,8 +119,7 @@ test('sublevel - prefixed batches on subsection', function (t) {
 
 test('sublevel - prefixed batches on subsection - strings', function (t) {
 
-  require('rimraf').sync('/tmp/test-sublevel4')
-  var base = require('level')('/tmp/test-sublevel4')
+  var base = level('test-sublevel4')
 
   var Sublevel = require('../')
 
