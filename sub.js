@@ -7,6 +7,11 @@ var xtend        = require('xtend')
 inherits(SubDB, EventEmitter)
 
 function SubDB (db, prefix, options) {
+  if('string' === typeof options) {
+    console.error('db.sublevel(name, seperator<string>) is depreciated')
+    console.error('use db.sublevel(name, {sep: separator})) if you must')
+    options = {sep: options}
+  }
   if(!(this instanceof SubDB)) return new SubDB(db, prefix, options)
   if(!db)     throw new Error('must provide db')
   if(!prefix) throw new Error('must provide prefix')
