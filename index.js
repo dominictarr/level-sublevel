@@ -5,21 +5,24 @@ var fixRange     = require('level-fix-range')
 
 var Hooks   = require('level-hooks')
 
-module.exports   = function (db, sep) {
+module.exports   = function (db, options) {
   if (db.sublevel) return db
+
+  options = options || {}
 
   //use \xff (255) as the seperator,
   //so that sections of the database will sort after the regular keys
-  db._sep = sep = sep || '\xff'
+  var sep = options.sep = options.sep || '\xff'
+  db._options = options
 
   Hooks(db)
 
   db.sublevels = {}
 
-  db.sublevel = function (prefix, sep) {
+  db.sublevel = function (prefix, options) {
     if(db.sublevels[prefix])
       return db.sublevels[prefix]
-    return new SubDb(db, prefix, sep || this._sep)
+    return new SubDb(db, prefix, options || this._options)
   }
 
   db.methods = {}
