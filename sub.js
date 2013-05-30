@@ -2,16 +2,20 @@ var EventEmitter = require('events').EventEmitter
 var inherits     = require('util').inherits
 var ranges       = require('string-range')
 var fixRange     = require('level-fix-range')
+var xtend        = require('xtend')
 
 inherits(SubDB, EventEmitter)
 
-function SubDB (db, prefix, sep) {
-  if(!(this instanceof SubDB)) return new SubDB(db, prefix, sep)
+function SubDB (db, prefix, options) {
+  if(!(this instanceof SubDB)) return new SubDB(db, prefix, options)
   if(!db)     throw new Error('must provide db')
   if(!prefix) throw new Error('must provide prefix')
+
+  options = options || {}
+  options.sep = options.sep || '\xff'
   
   this._parent = db
-  this._sep = sep || '\xff'
+  this._options = options
   this._prefix = prefix
   this._root = root(this)
   db.sublevels[prefix] = this
@@ -31,24 +35,35 @@ function SubDB (db, prefix, sep) {
 var SDB = SubDB.prototype
 
 SDB._key = function (key) {
-  return this._sep 
+  var sep = this._options.sep
+  return sep
     + this._prefix 
-    + this._sep
+    + sep
     + key
 }
 
-SDB.sublevel = function (prefix, sep) {
+SDB._getOptsAndCb = function (opts, cb) {
+  if (typeof opts == 'function') { 
+    cb = opts
+    opts = {}
+  }
+  return { opts: xtend(opts, this._options), cb: cb }
+}
+
+SDB.sublevel = function (prefix, options) {
   if(this.sublevels[prefix])
     return this.sublevels[prefix]
-  return new SubDB(this, prefix, sep || this._sep)
+  return new SubDB(this, prefix, options || this._options)
 }
 
 SDB.put = function (key, value, opts, cb) {
-  this._root.put(this.prefix(key), value, opts, cb)
+  var res = this._getOptsAndCb(opts, cb)
+  this._root.put(this.prefix(key), value, res.opts, res.cb)
 }
 
 SDB.get = function (key, opts, cb) {
-  this._root.get(this.prefix(key), opts, cb)
+  var res = this._getOptsAndCb(opts, cb)
+  this._root.get(this.prefix(key), res.opts, res.cb)
 }
 
 SDB.del = function (key, opts, cb) {
@@ -69,7 +84,8 @@ SDB.batch = function (changes, opts, cb) {
 }
 
 SDB.prefix = function (key) {
-  return this._parent.prefix() + this._sep + this._prefix + this._sep + (key || '')
+  var sep = this._options.sep
+  return this._parent.prefix() + sep + this._prefix + sep + (key || '')
 }
 
 SDB.keyStream =
@@ -89,23 +105,29 @@ SDB.createValueStream = function (opts) {
   return this.createReadStream(opts)
 }
 
+function selectivelyMerge(_opts, opts) {
+  [ 'valueEncoding'
+  , 'encoding'
+  , 'keyEncoding'
+  , 'reverse'
+  , 'values'
+  , 'keys'
+  , 'limit'
+  , 'fillCache'
+  ]
+  .forEach(function (k) {
+    if (opts.hasOwnProperty(k)) _opts[k] = opts[k]        
+  })
+}
+
 SDB.readStream = 
 SDB.createReadStream = function (opts) {
   opts = opts || {}
-  var _opts = {}
-  Object.keys(opts).forEach(function (k) {
-    _opts[k] = opts[k]
-  })
   var r = root(this)
   var p = this.prefix()
 
   var _opts = ranges.prefix(opts, p)
-  _opts.reverse = opts.reverse
-
-  for(var k in opts) {
-    if(_opts[k] == null)
-      _opts[k] = opts[k]
-  }
+  selectivelyMerge(_opts, xtend(opts, this._options))
 
   var s = r.createReadStream(_opts)
 
@@ -155,7 +177,7 @@ function root(db) {
 
 SDB.pre = function (range, hook) {
   if(!hook) hook = range, range = null
-  range = ranges.prefix(range, this.prefix(), this._sep)
+  range = ranges.prefix(range, this.prefix(), this._options.sep)
   var r = root(this._parent)
   var p = this.prefix()
   return r.hooks.pre(fixRange(range), function (ch, add) {
@@ -175,7 +197,7 @@ SDB.post = function (range, hook) {
   if(!hook) hook = range, range = null
   var r = root(this._parent)
   var p = this.prefix()
-  range = ranges.prefix(range, p, this._sep)
+  range = ranges.prefix(range, p, this._options.sep)
   return r.hooks.post(fixRange(range), function (data) {
     hook({key: data.key.substring(p.length), value: data.value, type: data.type})
   })

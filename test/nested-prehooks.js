@@ -6,7 +6,7 @@ require('tape')('sublevel', function (t) {
   var base = require('level')('/tmp/test-sublevel', function () {
     var Sublevel = require('../')
 
-    Sublevel(base, '~')
+    Sublevel(base, { sep: '~' })
 
     var a   = base.sublevel('A')
     var a_a = a.sublevel('A')

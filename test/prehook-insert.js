@@ -6,7 +6,7 @@ require('tape')('insert in prehook', function (t) {
 
   var base = Sublevel(require('level')('/tmp/test-sublevel'))
 
-  Sublevel(base, '~')
+  Sublevel(base, { sep: '~' })
 
   var a   = base.sublevel('A')
   var b   = base.sublevel('B')
