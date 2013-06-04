@@ -162,8 +162,18 @@ SDB.createWriteStream = function () {
   var p = this.prefix()
   var ws = r.createWriteStream.apply(r, arguments)
   var write = ws.write
+
+  var encoding = this._options.encoding
+  var valueEncoding = this._options.valueEncoding
+  var keyEncoding = this._options.keyEncoding
+
   ws.write = function (data) {
+    // not merging all options here since this happens on every write and things could get slowed down
+    // at this point we only consider encoding important to propagate
     data.key = p + data.key
+    if (encoding && typeof data.encoding === 'undefined') data.encoding = encoding
+    if (valueEncoding && typeof data.valueEncoding === 'undefined') data.valueEncoding = valueEncoding
+    if (keyEncoding && typeof data.keyEncoding === 'undefined') data.keyEncoding = keyEncoding
     return write.call(ws, data)
   }
   return ws
