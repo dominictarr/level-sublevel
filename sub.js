@@ -163,10 +163,31 @@ SDB.createWriteStream = function () {
   var p = this.prefix()
   var ws = r.createWriteStream.apply(r, arguments)
   var write = ws.write
-  ws.write = function (data) {
-    data.key = p + data.key
-    return write.call(ws, data)
-  }
+
+  var encoding = this._options.encoding
+  var valueEncoding = this._options.valueEncoding
+  var keyEncoding = this._options.keyEncoding
+
+  // slight optimization, if no encoding was specified at all,
+  // which will be the case most times, make write not check at all
+  var nocheck = !encoding && !valueEncoding && !keyEncoding
+
+  ws.write = nocheck 
+    ? function (data) {
+        data.key = p + data.key
+        return write.call(ws, data)
+      }
+    : function (data) {
+        data.key = p + data.key
+        
+        // not merging all options here since this happens on every write and things could get slowed down
+        // at this point we only consider encoding important to propagate
+        if (encoding && typeof data.encoding === 'undefined') data.encoding = encoding
+        if (valueEncoding && typeof data.valueEncoding === 'undefined') data.valueEncoding = valueEncoding
+        if (keyEncoding && typeof data.keyEncoding === 'undefined') data.keyEncoding = keyEncoding
+
+        return write.call(ws, data)
+      }
   return ws
 }
 
