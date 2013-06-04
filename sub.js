@@ -72,7 +72,8 @@ SDB.get = function (key, opts, cb) {
 }
 
 SDB.del = function (key, opts, cb) {
-  this._root.del(this.prefix(key), opts, cb)
+  var res = this._getOptsAndCb(opts, cb)
+  this._root.del(this.prefix(key), res.opts, res.cb)
 }
 
 SDB.batch = function (changes, opts, cb) {

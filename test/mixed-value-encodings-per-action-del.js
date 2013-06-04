@@ -1,5 +1,5 @@
 var levelup = require('level-test')()
-var base = require('../')(levelup('test-mixed-value-encodings-per-put'))
+var base = require('../')(levelup('test-mixed-value-encodings-per-del'))
 
 var test = require('tape')
 

@@ -1,9 +1,9 @@
 var levelup = require('level-test')()
-var base = require('../')(levelup('test-mixed-value-encodings-per-sub'))
+var base = require('../')(levelup('test-mixed-value-encodings-per-sub-del'))
 
 var test = require('tape')
 
-test('subsections support mixed encodings per sub with put/get', function (t) {
+test('subsections support mixed encodings per sub with del', function (t) {
   t.plan(6)
 
   var foo = base.sublevel('foo', { valueEncoding: 'utf8' })
