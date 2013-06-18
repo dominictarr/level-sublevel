@@ -21,6 +21,7 @@ function SubDB (db, prefix, options) {
   
   this._parent = db
   this._options = options
+  this.options = options
   this._prefix = prefix
   this._root = root(this)
   db.sublevels[prefix] = this
@@ -79,11 +80,13 @@ SDB.del = function (key, opts, cb) {
 SDB.batch = function (changes, opts, cb) {
   var self = this
   changes.forEach(function (ch) {
+
     //OH YEAH, WE NEED TO VALIDATE THAT UPDATING THIS KEY/PREFIX IS ALLOWED
-    if('string' === typeof ch.prefix) {
+    if('string' === typeof ch.prefix)
       ch.key = ch.prefix + ch.key
-    } else
-    ch.key = (ch.prefix || self).prefix(ch.key)
+    else
+      ch.key = (ch.prefix || self).prefix(ch.key)
+
     if(ch.prefix) ch.prefix = null
   })
   this._root.batch(changes, opts, cb)
