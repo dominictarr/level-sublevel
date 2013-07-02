@@ -78,6 +78,8 @@ SDB.del = function (key, opts, cb) {
 }
 
 SDB.batch = function (changes, opts, cb) {
+  if(!Array.isArray(changes))
+    throw new Error('batch must be passed an Array')
   var self = this
   changes.forEach(function (ch) {
 

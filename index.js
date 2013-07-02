@@ -68,6 +68,8 @@ module.exports   = function (db, options) {
   
   var batch = db.batch
   db.batch = function (changes, opts, cb) {
+    if(!Array.isArray(changes))
+      throw new Error('batch must be passed an Array')
     changes.forEach(function (e) {
       if(e.prefix) {
         if('function' === typeof e.prefix.prefix)
