@@ -16,13 +16,13 @@
   "devDependencies": {
     "level": "~0.9.0",
     "rimraf": "~2.1.4",
-    "tape": "~0.2.2",
     "shasum": "0.0.2",
     "monotonic-timestamp": "0.0.8",
     "pull-stream": "~2.18.2",
     "pull-level": "~1.1.1",
     "level-test": "~1.1.1",
-    "stream-to-pull-stream": "~1.2.0"
+    "stream-to-pull-stream": "~1.2.0",
+    "tape": "~1.0.4"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
