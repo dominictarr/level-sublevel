@@ -74,27 +74,26 @@ tape('insert in prehook - encodings', function (t) {
 
   Sublevel(base, '~')
 
-  var a   = base.sublevel('A')
-  var b   = base.sublevel('B', {valueEncoding: 'utf8'})
+  var b = base.sublevel('B', {valueEncoding: 'utf8'})
 
   var as = {}
-  var aas = {}
+//  var aas = {}
 
   base.pre(function (op, add) {
     as[op.key] = op.value
     console.log('A   :', op)
     add({
-      key: op.key, value: JSON.stringify(op.value), 
-      type: 'put', prefix: b
+      key: op.key, value: JSON.stringify({value: op.value}), 
+      type: 'put', prefix: b//, valueEncoding: 'utf8'
     })
   })
 
   var val = {'random': + Math.random()}
-  base.put('foo', val, function () {
-
+  base.put('foo', val, function (err) {
+    if(err) throw err
     b.get('foo', function (err, _val) {
       console.log('GET', _val, val)
-      t.equal(JSON.parse(_val), val)
+      t.deepEqual(JSON.parse(_val), {value: val})
       t.end()
     })
   })

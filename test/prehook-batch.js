@@ -30,7 +30,8 @@ test('prehook can introspect whole batch', function (t) {
     {key: 'foo', value: new Date(), type: 'put'},
     {key: Date.now(), value: 'foo', type: 'put', prefix: logDb},
   ], function (err) {
-    t.notOk(err)
+    if(err) console.error(err.stack)
+    t.notOk(err, 'save did not error')
     t.ok(didHaveLog)
     t.end()
   })
