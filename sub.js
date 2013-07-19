@@ -94,6 +94,20 @@ SDB.batch = function (changes, opts, cb) {
   this._root.batch(changes, opts, cb)
 }
 
+SDB._getKeyEncoding = function () {
+  if(this.options.keyEncoding)
+    return this.options.keyEncoding
+  if(this._parent && this._parent._getKeyEncoding)
+    return this.parent._getKeyEncoding()
+}
+
+SDB._getValueEncoding = function () {
+  if(this.options.valueEncoding)
+    return this.options.valueEncoding
+  if(this._parent && this._parent._getValueEncoding)
+    return this.parent._getValueEncoding()
+}
+
 SDB.prefix = function (key) {
   var sep = this._options.sep
   return this._parent.prefix() + sep + this._prefix + sep + (key || '')
@@ -187,9 +201,12 @@ SDB.createWriteStream = function () {
         
         // not merging all options here since this happens on every write and things could get slowed down
         // at this point we only consider encoding important to propagate
-        if (encoding && typeof data.encoding === 'undefined') data.encoding = encoding
-        if (valueEncoding && typeof data.valueEncoding === 'undefined') data.valueEncoding = valueEncoding
-        if (keyEncoding && typeof data.keyEncoding === 'undefined') data.keyEncoding = keyEncoding
+        if (encoding && typeof data.encoding === 'undefined')
+          data.encoding = encoding
+        if (valueEncoding && typeof data.valueEncoding === 'undefined')
+          data.valueEncoding = valueEncoding
+        if (keyEncoding && typeof data.keyEncoding === 'undefined')
+          data.keyEncoding = keyEncoding
 
         return write.call(ws, data)
       }
