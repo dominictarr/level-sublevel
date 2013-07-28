@@ -50,7 +50,7 @@ module.exports   = function (db, options) {
   function safeRange(fun) {
     return function (opts) {
       opts = opts || {}
-      fixRange(opts)
+      opts = fixRange(opts)
 
       if(opts.reverse) opts.start = opts.start || sep
       else             opts.end   = opts.end || sep
