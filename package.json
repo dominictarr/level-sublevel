@@ -20,7 +20,7 @@
     "monotonic-timestamp": "0.0.8",
     "pull-stream": "~2.18.2",
     "pull-level": "~1.1.1",
-    "level-test": "~1.1.1",
+    "level-test": ">=1.5.1 <2",
     "stream-to-pull-stream": "~1.2.0",
     "tape": "~1.0.4"
   },
