@@ -4,10 +4,7 @@ var pull = require('pull-stream')
 var toPull = require('stream-to-pull-stream')
 
 var level = require('level-test')()
-
 var sublevel = require('../')
-
-
 var tape = require('tape')
 
 tape('keys', function (t) {

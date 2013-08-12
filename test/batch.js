@@ -18,13 +18,15 @@ function all (db, cb) {
     .on('error', done)
 }
 
+var sublevel = require('../')
+function sl(name) {
+  return sublevel(level(name), {sep: "~"})
+}
+
+
 test('sublevel - batch', function (t) {
 
-  var base = level('test-sublevel')
-
-  var Sublevel = require('../')
-
-  Sublevel(base, { sep: '~' })
+  var base = sl('test-sublevel')
 
   var a    = base.sublevel('A')
   var b    = base.sublevel('B')
@@ -55,11 +57,7 @@ test('sublevel - batch', function (t) {
 
 test('sublevel - prefixed batches', function (t) {
 
-  var base = level('test-sublevel2')
-
-  var Sublevel = require('../')
-
-  Sublevel(base, { sep: '~' })
+  var base = sl('test-sublevel2')
 
   var a    = base.sublevel('A')
   var b    = base.sublevel('B')
@@ -87,11 +85,7 @@ test('sublevel - prefixed batches', function (t) {
 
 test('sublevel - prefixed batches on subsection', function (t) {
 
-  var base = level('test-sublevel3')
-
-  var Sublevel = require('../')
-
-  Sublevel(base, { sep: '~' })
+  var base = sl('test-sublevel3')
 
   var a    = base.sublevel('A')
   var b    = base.sublevel('B')
@@ -119,11 +113,7 @@ test('sublevel - prefixed batches on subsection', function (t) {
 
 test('sublevel - prefixed batches on subsection - strings', function (t) {
 
-  var base = level('test-sublevel4')
-
-  var Sublevel = require('../')
-
-  Sublevel(base, { sep: '~' })
+  var base = sl('test-sublevel4')
 
   var a    = base.sublevel('A')
   var b    = base.sublevel('B')

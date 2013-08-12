@@ -1,11 +1,13 @@
 var level = require('level-test')()
+var Sublevel = require('../')
+
+function sl (name) {
+  return Sublevel(level(name), {sep: '~'}) 
+}
 
 require('tape')('sublevel', function (t) {
 
-  var base = level('test-sublevel')
-  var Sublevel = require('../')
-
-  Sublevel(base, { sep: '~' })
+  var base = sl('test-sublevel')
 
   var a    = base.sublevel('A')
   var b    = base.sublevel('SEQ')
