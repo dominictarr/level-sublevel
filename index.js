@@ -5,7 +5,11 @@ var fixRange     = require('level-fix-range')
 
 var Hooks   = require('level-hooks')
 
-module.exports   = function (db, options) {
+module.exports   = function (_db, options) {
+  function DB () {}
+  DB.prototype = _db
+  var db = new DB()
+
   if (db.sublevel) return db
 
   options = options || {}
