@@ -98,14 +98,14 @@ SDB._getKeyEncoding = function () {
   if(this.options.keyEncoding)
     return this.options.keyEncoding
   if(this._parent && this._parent._getKeyEncoding)
-    return this.parent._getKeyEncoding()
+    return this._parent._getKeyEncoding()
 }
 
 SDB._getValueEncoding = function () {
   if(this.options.valueEncoding)
     return this.options.valueEncoding
   if(this._parent && this._parent._getValueEncoding)
-    return this.parent._getValueEncoding()
+    return this._parent._getValueEncoding()
 }
 
 SDB.prefix = function (key) {
@@ -228,7 +228,7 @@ SDB.pre = function (range, hook) {
   range = ranges.prefix(range, this.prefix(), this._options.sep)
   var r = root(this._parent)
   var p = this.prefix()
-  return r.hooks.pre(fixRange(range), function (ch, add) {
+  return r.hooks.pre(fixRange(range), function (ch, add, batch) {
     hook({
       key: ch.key.substring(p.length),
       value: ch.value,
@@ -237,7 +237,7 @@ SDB.pre = function (range, hook) {
       //maybe remove the second add arg now
       //that op can have prefix?
       add(ch, ch.prefix ? _p : (_p || p))
-    })
+    }, batch)
   })
 }
 
