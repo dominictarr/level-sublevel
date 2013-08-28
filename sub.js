@@ -18,7 +18,7 @@ function SubDB (db, prefix, options) {
 
   options = options || {}
   options.sep = options.sep || '\xff'
-  
+
   this._parent = db
   this._options = options
   this.options = options
@@ -43,13 +43,13 @@ var SDB = SubDB.prototype
 SDB._key = function (key) {
   var sep = this._options.sep
   return sep
-    + this._prefix 
+    + this._prefix
     + sep
     + key
 }
 
 SDB._getOptsAndCb = function (opts, cb) {
-  if (typeof opts == 'function') { 
+  if (typeof opts == 'function') {
     cb = opts
     opts = {}
   }
@@ -80,7 +80,8 @@ SDB.del = function (key, opts, cb) {
 SDB.batch = function (changes, opts, cb) {
   if(!Array.isArray(changes))
     throw new Error('batch must be passed an Array')
-  var self = this
+  var self = this,
+      res = this._getOptsAndCb(opts, cb)
   changes.forEach(function (ch) {
 
     //OH YEAH, WE NEED TO VALIDATE THAT UPDATING THIS KEY/PREFIX IS ALLOWED
@@ -91,7 +92,7 @@ SDB.batch = function (changes, opts, cb) {
 
     if(ch.prefix) ch.prefix = null
   })
-  this._root.batch(changes, opts, cb)
+  this._root.batch(changes, res.opts, res.cb)
 }
 
 SDB._getKeyEncoding = function () {
@@ -141,11 +142,11 @@ function selectivelyMerge(_opts, opts) {
   , 'fillCache'
   ]
   .forEach(function (k) {
-    if (opts.hasOwnProperty(k)) _opts[k] = opts[k]        
+    if (opts.hasOwnProperty(k)) _opts[k] = opts[k]
   })
 }
 
-SDB.readStream = 
+SDB.readStream =
 SDB.createReadStream = function (opts) {
   opts = opts || {}
   var r = root(this)
@@ -191,14 +192,14 @@ SDB.createWriteStream = function () {
   // which will be the case most times, make write not check at all
   var nocheck = !encoding && !valueEncoding && !keyEncoding
 
-  ws.write = nocheck 
+  ws.write = nocheck
     ? function (data) {
         data.key = p + data.key
         return write.call(ws, data)
       }
     : function (data) {
         data.key = p + data.key
-        
+
         // not merging all options here since this happens on every write and things could get slowed down
         // at this point we only consider encoding important to propagate
         if (encoding && typeof data.encoding === 'undefined')
