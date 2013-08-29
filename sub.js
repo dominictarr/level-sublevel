@@ -80,7 +80,8 @@ SDB.del = function (key, opts, cb) {
 SDB.batch = function (changes, opts, cb) {
   if(!Array.isArray(changes))
     throw new Error('batch must be passed an Array')
-  var self = this
+  var self = this,
+      res = this._getOptsAndCb(opts, cb)
   changes.forEach(function (ch) {
 
     //OH YEAH, WE NEED TO VALIDATE THAT UPDATING THIS KEY/PREFIX IS ALLOWED
@@ -91,7 +92,7 @@ SDB.batch = function (changes, opts, cb) {
 
     if(ch.prefix) ch.prefix = null
   })
-  this._root.batch(changes, opts, cb)
+  this._root.batch(changes, res.opts, res.cb)
 }
 
 SDB._getKeyEncoding = function () {
