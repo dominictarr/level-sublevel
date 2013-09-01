@@ -18,7 +18,7 @@ function SubDB (db, prefix, options) {
 
   options = options || {}
   options.sep = options.sep || '\xff'
-
+  
   this._parent = db
   this._options = options
   this.options = options
@@ -43,13 +43,13 @@ var SDB = SubDB.prototype
 SDB._key = function (key) {
   var sep = this._options.sep
   return sep
-    + this._prefix
+    + this._prefix 
     + sep
     + key
 }
 
 SDB._getOptsAndCb = function (opts, cb) {
-  if (typeof opts == 'function') {
+  if (typeof opts == 'function') { 
     cb = opts
     opts = {}
   }
@@ -80,8 +80,7 @@ SDB.del = function (key, opts, cb) {
 SDB.batch = function (changes, opts, cb) {
   if(!Array.isArray(changes))
     throw new Error('batch must be passed an Array')
-  var self = this,
-      res = this._getOptsAndCb(opts, cb)
+  var self = this
   changes.forEach(function (ch) {
 
     //OH YEAH, WE NEED TO VALIDATE THAT UPDATING THIS KEY/PREFIX IS ALLOWED
@@ -92,7 +91,7 @@ SDB.batch = function (changes, opts, cb) {
 
     if(ch.prefix) ch.prefix = null
   })
-  this._root.batch(changes, res.opts, res.cb)
+  this._root.batch(changes, opts, cb)
 }
 
 SDB._getKeyEncoding = function () {
@@ -142,11 +141,11 @@ function selectivelyMerge(_opts, opts) {
   , 'fillCache'
   ]
   .forEach(function (k) {
-    if (opts.hasOwnProperty(k)) _opts[k] = opts[k]
+    if (opts.hasOwnProperty(k)) _opts[k] = opts[k]        
   })
 }
 
-SDB.readStream =
+SDB.readStream = 
 SDB.createReadStream = function (opts) {
   opts = opts || {}
   var r = root(this)
@@ -158,42 +157,25 @@ SDB.createReadStream = function (opts) {
   var s = r.createReadStream(_opts)
 
   if(_opts.values === false) {
-    var read = s.read
-    if (read) {
-      s.read = function (size) {
-        var val = read.call(this, size)
-        if (val) val = val.substring(p.length)
-        return val
-      }
-    } else {
-      var emit = s.emit
-      s.emit = function (event, val) {
-        if(event === 'data') {
-          return emit.call(this, 'data', val.substring(p.length))
-        } else
-          return emit.call(this, event, val)
+    var emit = s.emit
+    s.on("data", Function())
+    s.emit = function (event, val) {
+      if(event === 'data') {
+        val = val.substr(p.length)
+        return emit.call(this, 'data', val)
+      } else {
+        return emit.call(this, event, val)
       }
     }
     return s
   } else if(_opts.keys === false)
     return s
-  else {
-    var read = s.read
-    if (read) {
-      s.read = function (size) {
-        var d = read.call(this, size)
-        if (d) d.key = d.key.substring(p.length)
-        return d
-      }
-    } else {
-      s.on('data', function (d) {
-        //mutate the prefix!
-        //this doesn't work for createKeyStream admittedly.
-        d.key = d.key.substring(p.length)
-      })
-    }
-    return s
-  }
+  else
+    return s.on('data', function (d) {
+      //mutate the prefix!
+      //this doesn't work for createKeyStream admittedly.
+      d.key = d.key.substring(p.length);
+    })
 }
 
 
@@ -212,14 +194,14 @@ SDB.createWriteStream = function () {
   // which will be the case most times, make write not check at all
   var nocheck = !encoding && !valueEncoding && !keyEncoding
 
-  ws.write = nocheck
+  ws.write = nocheck 
     ? function (data) {
         data.key = p + data.key
         return write.call(ws, data)
       }
     : function (data) {
         data.key = p + data.key
-
+        
         // not merging all options here since this happens on every write and things could get slowed down
         // at this point we only consider encoding important to propagate
         if (encoding && typeof data.encoding === 'undefined')
