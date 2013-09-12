@@ -13,7 +13,7 @@ for real-time changing data.
 
 Unstable: Expect patches and features, possible api changes.
 
-This is module is working well, but may change in the future as it's use is futher explored.
+This is module is working well, but may change in the future as its use is futher explored.
 
 ## Example
 
@@ -44,7 +44,7 @@ Hooks are specially built into Sublevel so that you can
 do all sorts of clever stuff, like generating views or
 logs when records are inserted!
 
-Records added via hooks will be atomically with the triggering change.
+Records added via hooks will be atomically inserted with the triggering change.
 
 ### Hooks Example
 
