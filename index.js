@@ -57,7 +57,7 @@ module.exports   = function (_db, options) {
       opts = fixRange(opts)
 
       if(opts.reverse) opts.start = opts.start || opts.gt || opts.gte || sep
-      else             opts.end = opts.end || opts.lt || opts.lte || sep
+      else             opts.end   = opts.end || opts.lt || opts.lte || sep
 
       return fun.call(db, opts)
     }
