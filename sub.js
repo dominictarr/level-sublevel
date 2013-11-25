@@ -3,6 +3,7 @@ var inherits     = require('util').inherits
 var ranges       = require('string-range')
 var fixRange     = require('level-fix-range')
 var xtend        = require('xtend')
+var Transform    = require('readable-stream').Transform
 
 inherits(SubDB, EventEmitter)
 
@@ -156,44 +157,25 @@ SDB.createReadStream = function (opts) {
   selectivelyMerge(_opts, xtend(opts, this._options))
 
   var s = r.createReadStream(_opts)
+  if (_opts.keys === false) return s
+  
+  var tr = Transform({ objectMode: true })
+  s.on('error', tr.emit.bind(tr, 'error'))
+  s.pipe(tr)
 
   if(_opts.values === false) {
-    var read = s.read
-    if (read) {
-      s.read = function (size) {
-        var val = read.call(this, size)
-        if (val) val = val.substring(p.length)
-        return val
-      }
-    } else {
-      var emit = s.emit
-      s.emit = function (event, val) {
-        if(event === 'data') {
-          emit.call(this, 'data', val.substring(p.length))
-        } else
-          emit.call(this, event, val)
-      }
+    tr._transform = function (key, enc, done) {
+      key = key.substring(p.length)
+      done(null, key) 
     }
-    return s
-  } else if(_opts.keys === false)
-    return s
-  else {
-    var read = s.read
-    if (read) {
-      s.read = function (size) {
-        var d = read.call(this, size)
-        if (d) d.key = d.key.substring(p.length)
-        return d
-      }
-    } else {
-      s.on('data', function (d) {
-        //mutate the prefix!
-        //this doesn't work for createKeyStream admittedly.
-        d.key = d.key.substring(p.length)
-      })
+  } else {
+    tr._transform = function (data, enc, done) {
+      data.key = data.key.substring(p.length)
+      done(null, data)
     }
-    return s
   }
+
+  return tr
 }
 
 
