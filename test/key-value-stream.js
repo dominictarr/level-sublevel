@@ -1,7 +1,7 @@
 
-var pl   = require('pull-level')
-var pull = require('pull-stream')
-var toPull = require('stream-to-pull-stream')
+var pl       = require('pull-level')
+var pull     = require('pull-stream')
+var streamTo = require('stream-to');
 
 var level = require('level-test')()
 var sublevel = require('../')
@@ -21,25 +21,23 @@ tape('keys', function (t) {
         throw err
       }
 
-      toPull(db.createKeyStream())
-        .pipe(pull.collect(function (err, ary) {
+      streamTo.array(db.createKeyStream(), function (err, ary) {
+        console.log(ary)
+        ary.forEach(function (e) {
+          t.equal(typeof e, 'string')
+          t.ok(/^key_/.test(e))
+        })
+        streamTo.array(db.createValueStream(), function (err, ary) {
           console.log(ary)
           ary.forEach(function (e) {
             t.equal(typeof e, 'string')
-            t.ok(/^key_/.test(e))
+            t.ok(/^value_/.test(e))
+            console.log(e)
           })
-          toPull(db.createValueStream())
-            .pipe(pull.collect(function (err, ary) {
-              console.log(ary)
-              ary.forEach(function (e) {
-                t.equal(typeof e, 'string')
-                t.ok(/^value_/.test(e))
-                console.log(e)
-              })
 
-              t.end()
-            }))
-        }))
+          t.end()
+        })
+      })
     }))
 })
 
