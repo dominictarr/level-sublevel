@@ -3,6 +3,7 @@ var inherits     = require('util').inherits
 var ranges       = require('string-range')
 var fixRange     = require('level-fix-range')
 var xtend        = require('xtend')
+var Batch        = require('./batch')
 
 inherits(SubDB, EventEmitter)
 
@@ -79,7 +80,7 @@ SDB.del = function (key, opts, cb) {
 
 SDB.batch = function (changes, opts, cb) {
   if(!Array.isArray(changes))
-    throw new Error('batch must be passed an Array')
+    return new Batch(this)
   var self = this,
       res = this._getOptsAndCb(opts, cb)
   changes.forEach(function (ch) {
