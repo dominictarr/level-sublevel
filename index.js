@@ -1,6 +1,7 @@
 var EventEmitter = require('events').EventEmitter
 var next         = process.nextTick
 var SubDb        = require('./sub')
+var Batch        = require('./batch')
 var fixRange     = require('level-fix-range')
 
 var Hooks   = require('level-hooks')
@@ -69,11 +70,11 @@ module.exports   = function (_db, options) {
   db.createKeyStream   = safeRange(db.createKeyStream)
   db.valuesStream =
   db.createValueStream = safeRange(db.createValueStream)
-  
+
   var batch = db.batch
   db.batch = function (changes, opts, cb) {
     if(!Array.isArray(changes))
-      throw new Error('batch must be passed an Array')
+      return new Batch(db)
     changes.forEach(function (e) {
       if(e.prefix) {
         if('function' === typeof e.prefix.prefix)
