@@ -4,7 +4,6 @@ var inRange = require('./range')
 module.exports = function (compare) {
   var hooks = []
 
-
   return {
     add: function (range, hook) {
       var m = {range: range, hook: hook}
@@ -12,7 +11,7 @@ module.exports = function (compare) {
       //call this to remove
       return function () {
         var i = hooks.indexOf(m)
-        if(~i) return hooks.slice(i, 1)
+        if(~i) return hooks.splice(i, 1)
       }
 
     },
@@ -24,10 +23,8 @@ module.exports = function (compare) {
     },
 
     trigger: function (key, args) {
-      console.log('trigger?', key, hooks)
       for(var i = 0; i < hooks.length; i++) {
         var test = hooks[i]
-        console.log('in range?', test.range, key)
         if(inRange(test.range, key))
           test.hook.apply(null, args)
       }
