@@ -1,4 +1,5 @@
 var tape = require('tape')
+var pull = require('pull-stream')
 
 //the mock is partical levelup api.
 var mock  = require('./mock')
@@ -7,7 +8,22 @@ var shell = require('../shell') //the shell surrounds the nut
 var codec = require('key-order')
 
 function create () {
-  return shell ( nut ( mock(), codec ) )
+
+  //convert pull stream to iterators
+  function pullIterator (iterator) {
+    return function (end, cb) {
+      if(!end) iterator.get(function (err, key, value) {
+                if(err) return cb(err)
+                if(key===undefined || value === undefined)
+                        return cb(true)
+                cb(null, {key: key, value: value})
+      })
+      else
+        iterator.end(cb)
+    }
+  }
+
+  return shell ( nut ( mock(), codec ), [], pullIterator )
 }
 
 var db = create()
@@ -74,7 +90,7 @@ var db2 = create()
 
 prehookBatch(db2)
 prehookBatch(db2.sublevel('foo'))
-//return
+
 function posthook (args, calls, db) {
   db = db || shell ( nut ( mock(), codec ) )
 
@@ -128,7 +144,7 @@ posthook(['batch', [
 
 function rmHook (db) {
   tape('test - prehook - put', function (t) {
-    var db = shell ( nut ( mock(), codec ) )
+    db = db || shell ( nut ( mock(), codec ) )
 
     var hk = 0
     var rm = db.pre(function (op, add) {
@@ -156,4 +172,31 @@ var db3 = create()
 
 rmHook(db3)
 rmHook(db3.sublevel('foo'))
+
+function stream (db) {
+
+  tape('pull-stream', function (t) {  
+
+    var batch = [
+      { key: 'foo', value: 'bar'},
+      { key: 'fum', value: 'boo'},
+      { key: 'fuz', value: 'baz'}
+    ]
+
+    db.batch(batch, function (err) {
+      pull(db.createReadStream(), pull.collect(function (err, ary) {
+        console.log('PULL', err, ary)
+        console.log(ary)
+        t.deepEqual(ary, batch)
+        t.end()
+      }))
+    })
+  })
+}
+
+var db4 = create()
+stream(db4)
+stream(db4.sublevel('foo'))
+stream(db4.sublevel('foo').sublevel('bar'))
+
 
