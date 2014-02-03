@@ -1,6 +1,5 @@
 var hooks = require('./hooks')
 
-
 module.exports = function (db, codec) {
   var prehooks = hooks()
   var posthooks = hooks()
@@ -35,7 +34,27 @@ module.exports = function (db, codec) {
       return db.get(codec.encode([prefix, key]), cb)
     },
     pre: prehooks.add,
-    post: posthooks.add
+    post: posthooks.add,
+    iterator: function (opts) {
+      var prefix = opts.prefix || []
+      if(opts.lte) opts.lte = codec.encode([prefix, opts.lte])
+      else         opts.lt  = codec.encode([prefix, opts.lt || '~'])
+      if(opts.gt)  opts.gt  = codec.encode([prefix, opts.gt])
+      else         opts.gte = codec.encode([prefix, opts.gte || ''])
+
+      opts.prefix = null
+
+      var iterator = (db.iterator || db.db.iterator) (opts)
+      return {
+        get: function (cb) {
+          return iterator.get(function (err, key, value) {
+            if(err) return cb(err)
+            cb(null, key && codec.decode(key)[1], value)
+          })
+        },
+        end: iterator.end
+      }
+    }
   }
 
 }
