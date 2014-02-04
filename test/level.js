@@ -5,7 +5,7 @@ var pull = require('pull-stream')
 var mock  = require('./mock')
 var nut   = require('../nut')
 var shell = require('../shell') //the shell surrounds the nut
-var codec = require('key-order')
+var codec = require('../codec')
 
 function create () {
 
