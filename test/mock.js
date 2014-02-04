@@ -1,4 +1,6 @@
 var EventEmitter = require('events').EventEmitter
+var range = require('../range')
+var pull = require('pull-stream')
 
 module.exports = function () {
   var emitter = new EventEmitter()
@@ -23,6 +25,30 @@ module.exports = function () {
       if(!value) cb(new Error('404'))
       else       cb(null, value)
     })
+  }
+
+  emitter.iterator = function (opts) {
+    console.log('it', data)
+    var values = Object.keys(data).sort().filter(function (v) {
+      console.log(opts, v, range(opts, v))
+      return range(opts, v)
+    }).map(function (key) {
+      return {key: key, value: data[key]}
+    })
+    if(opts.reverse) values.reverse()
+    console.log('pull-values', values)
+    var stream = pull.values(values)
+
+    return {
+      get: function (cb) {
+        stream(null, function (err, d) {
+          cb(err, d && d.key, d && d.value)
+        })
+      },
+      end: function (cb) {
+        stream(true, cb)
+      }
+    }
   }
 
   return emitter
