@@ -2,6 +2,8 @@ var EventEmitter = require('events').EventEmitter
 var range = require('../range')
 var pull = require('pull-stream')
 
+var next = 'undefined' === typeof setImmediate ? setTimeout : setImmediate
+
 module.exports = function () {
   var emitter = new EventEmitter()
   var data = emitter.data = {}
@@ -13,7 +15,7 @@ module.exports = function () {
       else
         data[op.key] = op.value
     })
-    setImmediate(function () {
+    next(function () {
       emitter.emit('post', ops); cb()
     })
   }
@@ -21,7 +23,7 @@ module.exports = function () {
   emitter.get = function (key, cb) {
     console.log('GET', key, data)
     var value = data[key]
-    setImmediate(function () {
+    next(function () {
       if(!value) cb(new Error('404'))
       else       cb(null, value)
     })
