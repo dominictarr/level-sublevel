@@ -26,7 +26,7 @@ module.exports = function (compare) {
       for(var i = 0; i < hooks.length; i++) {
         var test = hooks[i]
         if(inRange(test.range, key))
-          test.hook.apply(null, args)
+          test.hook.apply(this, args)
       }
     }
   }
