@@ -11,9 +11,8 @@
     "level-hooks": ">=4.4.0 <5",
     "string-range": "~1.2.1",
     "level-fix-range": "2.0",
-    "pull-stream": "~2.21",
-    "xtend": "~2.0.4",
-    "pull-stream": "~2.21.0"
+    "pull-stream": "~2.21.0",
+    "xtend": "~2.0.4"
   },
   "devDependencies": {
     "rimraf": "~2.1.4",
@@ -31,5 +30,21 @@
   },
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
   "license": "MIT",
-  "stability": "unstable"
+  "stability": "unstable",
+  "testling": {
+    "files": "test/*.js",
+    "browsers": [
+      "ie/8..latest",
+      "firefox/17..latest",
+      "firefox/nightly",
+      "chrome/22..latest",
+      "chrome/canary",
+      "opera/12..latest",
+      "opera/next",
+      "safari/5.1..latest",
+      "ipad/6.0..latest",
+      "iphone/6.0..latest",
+      "android-browser/4.2..latest"
+    ]
+  }
 }

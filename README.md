@@ -3,6 +3,7 @@
 Separate sections of levelup, with hooks!
 
 [![build status](https://secure.travis-ci.org/dominictarr/level-sublevel.png)](http://travis-ci.org/dominictarr/level-sublevel)
+[![testling badge](https://ci.testling.com/dominictarr/level-sublevel.png)](https://ci.testling.com/dominictarr/level-sublevel)
 
 This module allows you to create seperate sections of a
 [levelup](https://github.com/rvagg/node-levelup) database,
