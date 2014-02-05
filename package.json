@@ -11,13 +11,14 @@
     "level-hooks": ">=4.4.0 <5",
     "string-range": "~1.2.1",
     "level-fix-range": "2.0",
-    "xtend": "~2.0.4"
+    "pull-stream": "~2.21",
+    "xtend": "~2.0.4",
+    "pull-stream": "~2.21.0"
   },
   "devDependencies": {
     "rimraf": "~2.1.4",
     "shasum": "0.0.2",
     "monotonic-timestamp": "0.0.8",
-    "pull-stream": "~2.18.2",
     "pull-level": "~1.1.1",
     "level-test": ">=1.5.1 <2",
     "stream-to-pull-stream": "~1.2.0",
