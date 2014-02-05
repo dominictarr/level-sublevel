@@ -185,8 +185,6 @@ function stream (db) {
 
     db.batch(batch, function (err) {
       pull(db.createReadStream(), pull.collect(function (err, ary) {
-        console.log('PULL', err, ary)
-        console.log(ary)
         t.deepEqual(ary, batch)
         t.end()
       }))

@@ -21,7 +21,6 @@ module.exports = function () {
   }
 
   emitter.get = function (key, cb) {
-    console.log('GET', key, data)
     var value = data[key]
     next(function () {
       if(!value) cb(new Error('404'))
@@ -30,15 +29,13 @@ module.exports = function () {
   }
 
   emitter.iterator = function (opts) {
-    console.log('it', data)
     var values = Object.keys(data).sort().filter(function (v) {
-      console.log(opts, v, range(opts, v))
       return range(opts, v)
     }).map(function (key) {
       return {key: key, value: data[key]}
     })
     if(opts.reverse) values.reverse()
-    console.log('pull-values', values)
+
     var stream = pull.values(values)
 
     return {
