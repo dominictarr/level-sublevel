@@ -4,7 +4,15 @@ var pull = require('pull-stream')
 
 var next = 'undefined' === typeof setImmediate ? setTimeout : setImmediate
 
+var I = 0
+
 module.exports = function () {
+  if(process.env.FOR_REAL) {
+    var db = require('level-test')()('test-level-sublevel_' + I++)
+    db.iterator = db.db.iterator
+    return db
+  }
+
   var emitter = new EventEmitter()
   var data = emitter.data = {}
 
@@ -28,7 +36,8 @@ module.exports = function () {
     })
   }
 
-  emitter.iterator = function (opts) {
+  emitter.db = {}
+  emitter.db.iterator = function (opts) {
     var values = Object.keys(data).sort().filter(function (v) {
       return range(opts, v)
     }).map(function (key) {
@@ -39,7 +48,7 @@ module.exports = function () {
     var stream = pull.values(values)
 
     return {
-      get: function (cb) {
+      next: function (cb) {
         stream(null, function (err, d) {
           cb(err, d && d.key, d && d.value)
         })

@@ -12,7 +12,7 @@ function create () {
   //convert pull stream to iterators
   function pullIterator (iterator) {
     return function (end, cb) {
-      if(!end) iterator.get(function (err, key, value) {
+      if(!end) iterator.next(function (err, key, value) {
                 if(err) return cb(err)
                 if(key===undefined || value === undefined)
                         return cb(true)
@@ -176,7 +176,6 @@ rmHook(db3.sublevel('foo'))
 function stream (db) {
 
   tape('pull-stream', function (t) {  
-
     var batch = [
       { key: 'foo', value: 'bar'},
       { key: 'fum', value: 'boo'},
@@ -184,7 +183,10 @@ function stream (db) {
     ]
 
     db.batch(batch, function (err) {
+      if(err) throw err
+
       pull(db.createReadStream(), pull.collect(function (err, ary) {
+        if(err) throw err
         t.deepEqual(ary, batch)
         t.end()
       }))
