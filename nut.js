@@ -19,7 +19,7 @@ module.exports = function (db, codec) {
 
       if(ops.length)
         db.batch(ops.map(function (op) {
-          return {key: codec.encode([op.prefix, op.key]), value: op.value}
+          return {key: codec.encode([op.prefix, op.key]), value: op.value, type: op.value ? 'put' : 'del'}
         }), opts, function (err) {
           if(err) return cb(err)
           ops.forEach(function (op) {
@@ -43,12 +43,14 @@ module.exports = function (db, codec) {
       else         opts.gte = codec.encode([prefix, opts.gte || ''])
 
       opts.prefix = null
-
-      var iterator = (db.iterator || db.db.iterator) (opts)
+      opts.keyAsBuffer = opts.valueAsBuffer = false
+      var _db = db.db || db
+      var iterator = _db.iterator (opts)
       return {
-        get: function (cb) {
-          return iterator.get(function (err, key, value) {
+        next: function (cb) {
+          return iterator.next(function (err, key, value) {
             if(err) return cb(err)
+            console.log(key)
             cb(null, key && codec.decode(key)[1], value)
           })
         },

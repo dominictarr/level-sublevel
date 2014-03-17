@@ -13,7 +13,7 @@ module.exports = function (db) {
   //convert pull stream to iterators
   function pullIterator (iterator) {
     return function (end, cb) {
-      if(!end) iterator.get(function (err, key, value) {
+      if(!end) iterator.next(function (err, key, value) {
                 if(err) return cb(err)
                 if(key===undefined || value === undefined)
                         return cb(true)
