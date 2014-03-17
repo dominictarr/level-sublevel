@@ -43,7 +43,13 @@ module.exports = function (db, codec) {
       else         opts.gte = codec.encode([prefix, opts.gte || ''])
 
       opts.prefix = null
+
+      //************************************************
+      //hard coded defaults, for now...
+      //TODO: pull defaults and encoding out of levelup.
       opts.keyAsBuffer = opts.valueAsBuffer = false
+      //************************************************
+
       var _db = db.db || db
       var iterator = _db.iterator (opts)
       return {
