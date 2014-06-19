@@ -1,6 +1,14 @@
 //compare two array items
+function isArrayLike (a) {
+  return Array.isArray(a) || Buffer.isBuffer(a)
+}
+
+function isPrimitive (a) {
+  return 'string' === typeof a || 'number' === typeof a
+}
+
 function compare (a, b) {
- if(Array.isArray(a) && Array.isArray(b)) {
+ if(isArrayLike(a) && isArrayLike(b)) {
     var l = Math.min(a.length, b.length)
     for(var i = 0; i < l; i++) {
       var c = compare(a[i], b[i])
@@ -8,7 +16,7 @@ function compare (a, b) {
     }
     return a.length - b.length
   }
-  if('string' == typeof a && 'string' == typeof b)
+  if(isPrimitive(a) && isPrimitive(b))
     return a < b ? -1 : a > b ? 1 : 0
 
   throw new Error('items not comparable:'
@@ -33,7 +41,7 @@ function prefix (a, b) {
   
   //handle cas where there is no key prefix
   //(a hook on an entire sublevel)
-  if(a.length == 1 && Array.isArray(lastA)) l ++
+  if(a.length == 1 && isArrayLike(lastA)) l ++
   
   while(l--) {
     if(compare(a[l], b[l])) return false
@@ -45,7 +53,7 @@ exports = module.exports = function (range, key) {
   //handle prefix specially,
   //check that everything up to the last item is equal
   //then check the last item starts with
-  if(Array.isArray(range)) return prefix(range, key)
+  if(isArrayLike(range)) return prefix(range, key)
 
   if(range.lt  && compare(key, range.lt) >= 0) return false
   if(range.lte && compare(key, range.lte) > 0) return false
