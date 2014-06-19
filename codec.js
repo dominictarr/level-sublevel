@@ -12,3 +12,5 @@ exports.decode = function (s) {
   var i = s.indexOf(separate, 1)
   return [s.substring(1, i).split(join).filter(Boolean), s.substring(++i)]
 }
+
+exports.buffer = false
