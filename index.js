@@ -2,8 +2,8 @@
 
 var nut   = require('./nut')
 var shell = require('./shell') //the shell surrounds the nut
-var codec = require('./codec')
-
+var precodec = require('./codec')
+var codec = require('levelup/lib/codec')
 // Currently this uses pull streams,
 // and not levelup's readstream, but in theory
 // I should be able pretty much just drop that in.
@@ -24,6 +24,6 @@ module.exports = function (db) {
     }
   }
 
-  return shell ( nut ( db, codec ), [], pullIterator )
+  return shell ( nut ( db, precodec, codec ), [], pullIterator )
   
 }
