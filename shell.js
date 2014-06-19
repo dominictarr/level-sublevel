@@ -9,12 +9,16 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
     if('function' === typeof opts) cb = opts, opts = {}
 
     nut.apply([{
-      key: key, value: value, 
+      key: key, value: value,
       prefix: prefix.slice(), type: 'put'
     }], opts, function (err) {
       if(err) return cb(err)
       emitter.emit('put', key, value); cb(null)
     })
+  }
+
+  emitter.prefix = function () {
+    return prefix.slice()
   }
 
   emitter.del = function (key, opts, cb) {
@@ -30,11 +34,11 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
   }
 
   emitter.batch = function (ops, opts, cb) {
-    if('function' === typeof opts) 
+    if('function' === typeof opts)
       cb = opts, opts = {}
     ops = ops.map(function (op) {
       return {
-        key:           op.key,   
+        key:           op.key,
         value:         op.value,
         prefix:        op.prefix || prefix,
         keyEncoding:   op.keyEncoding,    // *
@@ -47,10 +51,10 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
     })
   }
 
-  emitter.get = function (key, cb) {
+  emitter.get = function (key, opts, cb) {
     if('function' === typeof opts) 
       cb = opts, opts = {}
-    nut.get(key, prefix, cb)
+    nut.get(key, prefix, opts, cb)
   }
 
   emitter.sublevel = function (name) {
