@@ -5,9 +5,11 @@ var pull = require('pull-stream')
 var mock  = require('./mock')
 var nut   = require('../nut')
 var shell = require('../shell') //the shell surrounds the nut
-var codec = require('../codec')
+var codec = require('levelup/lib/codec')
+var bytewise = require('bytewise')
+var concat = require('../codec')
 
-function create () {
+function create (precodec) {
 
   //convert pull stream to iterators
   function pullIterator (iterator) {
@@ -23,22 +25,20 @@ function create () {
     }
   }
 
-  return shell ( nut ( mock(), codec ), [], pullIterator )
+  return shell ( nut ( mock(), precodec, codec ), [], pullIterator )
 }
-
-var db = create()
 
 function prehookPut (db) {
   tape('test - prehook - put', function (t) {
-    var db = shell ( nut ( mock(), codec ) )
 
     var log = db.sublevel('log')
     var c = 0
     db.pre(function (op, add) {
-      add({key: ''+c++, value: op.key, prefix: ['log']})
+      add({key: ''+c++, value: op.key, prefix: log.prefix()})
     })
 
     db.put('hello', 'there?', function (err) {
+
       if(err) throw err
       log.get('0', function (err, value) {
         if(err) throw err
@@ -51,12 +51,12 @@ function prehookPut (db) {
 
 function prehookBatch (db) {
   tape('test - prehook - put', function (t) {
-    var db = shell ( nut ( mock(), codec ) )
+//    var db = shell ( nut ( mock(), precodec, codec ) )
 
     var log = db.sublevel('log')
     var c = 0
     db.pre(function (op, add) {
-      add({key: ''+c++, value: op.key, prefix: ['log']})
+      add({key: ''+c++, value: op.key, prefix: log.prefix()})
     })
 
     db.batch([
@@ -82,69 +82,57 @@ function prehookBatch (db) {
   })
 }
 
+function createPostHooks (db) {
 
-prehookPut(db)
-prehookPut(db.sublevel('foo'))
+  function posthook (args, calls, db) {
+    //db = db || shell ( nut ( mock(), concat, codec ) )
 
-var db2 = create()
+    var method = args.shift()
+    tape('test - posthook - ' + method, function (t) {
 
-prehookBatch(db2)
-prehookBatch(db2.sublevel('foo'))
+      var cb = 0, hk = 0
+      var rm = db.post(function (op) {
+        hk ++
+        next()
+      })
 
-function posthook (args, calls, db) {
-  db = db || shell ( nut ( mock(), codec ) )
+      db[method].apply(db, args.concat(function (err) {
+        if(err) throw err
+        cb ++
+        next()
+      }))
 
-  var method = args.shift()
-  tape('test - posthook - ' + method, function (t) {
+      function next () {
+        if(cb + hk < calls + 1) return
+        t.equal(cb, 1)
+        t.equal(hk, calls)
+        rm()
+        t.end()
+      }
 
-    var cb = 0, hk = 0
-    var rm = db.post(function (op) {
-      hk ++
-      next()
     })
-    
-    db[method].apply(db, args.concat(function (err) {
-      if(err) throw err
-      cb ++
-      next()
-    }))
+  }
 
-    function next () {
-      if(cb + hk < calls + 1) return
-      t.equal(cb, 1)
-      t.equal(hk, calls)
-      rm()
-      t.end()
-    }
+  // test posthooks trigger correct number of times
 
-  })
+
+  posthook(['put', 'hello', 'there?'], 1, db)
+  posthook(['del', 'hello', 'there?'], 1, db)
+  posthook(['batch', [
+    { key: 'foo', value: 'bar', type: 'put'},
+    { key: 'fuz', value: 'baz', type: 'put'},
+    { key: 'fum', value: 'boo', type: 'put'}
+    ]], 3, db)
+
 }
 
-// test posthooks trigger correct number of times
-
-posthook(['put', 'hello', 'there?'], 1)
-posthook(['del', 'hello', 'there?'], 1)
-posthook(['batch', [
-  { key: 'foo', value: 'bar', type: 'put'},
-  { key: 'fuz', value: 'baz', type: 'put'},
-  { key: 'fum', value: 'boo', type: 'put'}
-  ]], 3)
-
 // test posthooks also work in sublevels
-
-posthook(['put', 'hello', 'there?'], 1, db.sublevel('a'))
-posthook(['del', 'hello', 'there?'], 1, db.sublevel('b'))
-posthook(['batch', [
-  { key: 'foo', value: 'bar', type: 'put'},
-  { key: 'fuz', value: 'baz', type: 'put'},
-  { key: 'fum', value: 'boo', type: 'put'}
-  ]], 3, db.sublevel('c'))
 
 //test removing hooks.
 
 function rmHook (db) {
   tape('test - prehook - put', function (t) {
-    db = db || shell ( nut ( mock(), codec ) )
+//    db = db || shell ( nut ( mock(), precodec, codec ) )
 
     var hk = 0
     var rm = db.pre(function (op, add) {
@@ -168,11 +156,6 @@ function rmHook (db) {
   
 }
 
-var db3 = create()
-
-rmHook(db3)
-rmHook(db3.sublevel('foo'))
-
 function stream (db) {
 
   tape('pull-stream', function (t) {  
@@ -187,6 +170,7 @@ function stream (db) {
 
       pull(db.createReadStream(), pull.collect(function (err, ary) {
         if(err) throw err
+        console.log(ary)
         t.deepEqual(ary, batch)
         t.end()
       }))
@@ -194,9 +178,24 @@ function stream (db) {
   })
 }
 
-var db4 = create()
-stream(db4)
-stream(db4.sublevel('foo'))
-stream(db4.sublevel('foo').sublevel('bar'))
 
+var tests = [
+  prehookPut, prehookBatch, createPostHooks, rmHook, stream
+]
+
+tests.forEach(function (test) {
+
+  var db1 = create(concat)
+
+  test(db1)
+  test(db1.sublevel('foo'))
+  test(db1.sublevel('foo').sublevel('blah'))
+
+  var db2 = create(bytewise)
+
+  test(db2)
+  test(db2.sublevel('foo'))
+  test(db2.sublevel('foo').sublevel('blah'))
+
+})
 
