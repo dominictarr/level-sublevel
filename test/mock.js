@@ -19,9 +19,11 @@ function insert (ary, op) {
 }
 
 function get (ary, key) {
-  for(var i in ary)
+  for(var i in ary) {
+    console.log(ary[i], key, compare(ary[i].key, key))
     if(compare(ary[i].key, key) === 0)
       return ary[i].value
+  }
   return null
 }
 
@@ -38,10 +40,6 @@ module.exports = function () {
   emitter.batch = function (ops, opts, cb) {
     ops.forEach(function (op) {
       insert(data, op)
-//      if(op.type === 'del')
-//        delete data[op.key]
-//      else
-//        data[op.key] = op.value
     })
     next(function () {
       emitter.emit('post', ops); cb()
@@ -77,6 +75,10 @@ module.exports = function () {
         stream(true, cb)
       }
     }
+  }
+
+  emitter.open = function (cb) {
+    cb()
   }
 
   return emitter

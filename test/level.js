@@ -1,5 +1,6 @@
 var tape = require('tape')
 var pull = require('pull-stream')
+var path = require('path')
 
 //the mock is partical levelup api.
 var mock  = require('./mock')
@@ -9,23 +10,29 @@ var codec = require('levelup/lib/codec')
 var bytewise = require('bytewise')
 var concat = require('../codec')
 
-function create (precodec) {
+function create (precodec, db) {
 
   //convert pull stream to iterators
   function pullIterator (iterator) {
-    return function (end, cb) {
-      if(!end) iterator.next(function (err, key, value) {
-                if(err) return cb(err)
-                if(key===undefined || value === undefined)
-                        return cb(true)
-                cb(null, {key: key, value: value})
+    var stream = pull.defer()
+
+    stream.setIterator = function (iterator) {
+      stream.resolve(function (end, cb) {
+        if(!end) iterator.next(function (err, key, value) {
+                  if(err) return cb(err)
+                  if(key === undefined || value === undefined)
+                          return cb(true)
+                  cb(null, {key: key, value: value})
+        })
+        else
+          iterator.end(cb)
       })
-      else
-        iterator.end(cb)
     }
+
+    return stream
   }
 
-  return shell ( nut ( mock(), precodec, codec ), [], pullIterator )
+  return shell ( nut ( db || mock(), precodec, codec ), [], pullIterator )
 }
 
 function prehookPut (db) {
@@ -183,6 +190,16 @@ var tests = [
   prehookPut, prehookBatch, createPostHooks, rmHook, stream
 ]
 
+var LevelDown = require('leveldown')
+var i = 0
+var rimraf = require('rimraf')
+
+function createTestDb () {
+  var dir = path.join('/tmp', 'level-sublevel_test' + (i++))
+  rimraf.sync(dir)
+  return new LevelDown(dir)
+}
+
 tests.forEach(function (test) {
 
   var db1 = create(concat)
@@ -192,6 +209,18 @@ tests.forEach(function (test) {
   test(db1.sublevel('foo').sublevel('blah'))
 
   var db2 = create(bytewise)
+
+  test(db2)
+  test(db2.sublevel('foo'))
+  test(db2.sublevel('foo').sublevel('blah'))
+
+  var db3 = create(concat, createTestDb())
+
+  test(db1)
+  test(db1.sublevel('foo'))
+  test(db1.sublevel('foo').sublevel('blah'))
+
+  var db4 = create(bytewise, createTestDb())
 
   test(db2)
   test(db2.sublevel('foo'))
