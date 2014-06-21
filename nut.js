@@ -1,8 +1,19 @@
 var hooks = require('./hooks')
 
+function isFunction (f) {
+  return 'function' === typeof f
+}
+
+function getPrefix (db) {
+  if(db == null) return db
+  if(isFunction(db.prefix)) return db.prefix()
+  return db
+}
+
 module.exports = function (db, precodec, codec) {
   var prehooks = hooks()
   var posthooks = hooks()
+  var waiting = [], ready = false
 
   function encodePrefix(prefix, key, opts1, opts2) {
     return precodec.encode([ prefix, codec.encodeKey(key, opts1, opts2) ])
@@ -12,11 +23,27 @@ module.exports = function (db, precodec, codec) {
     return precodec.decode(data)
   }
 
+  function start () {
+    ready = true
+    while(waiting.length)
+      waiting.shift()()
+  }
+
+  if(isFunction(db.isOpen)) {
+    if(db.isOpen())
+      ready = true
+    else
+      db.open()
+  } else {
+    db.open(start)
+  }
+
   return {
     apply: function (ops, opts, cb) {
       //apply prehooks here.
       for(var i = 0; i < ops.length; i++) {
         var op = ops[i]
+        op.prefix = getPrefix(op.prefix)
         prehooks.trigger([op.prefix, op.key], [op, add, ops])
 
         function add(ch) {
@@ -47,7 +74,25 @@ module.exports = function (db, precodec, codec) {
     },
     pre: prehooks.add,
     post: posthooks.add,
-    iterator: function (opts) {
+    createDecoder: function (opts) {
+      if(opts.keys !== false && opts.values !== false)
+        return function (key, value) {
+          return {
+            key: codec.decodeKey(key, opts),
+            value: codec.decodeValue(value, opts)
+          }
+        }
+      if(opts.values !== false)
+        return function (_, value) {
+          return codec.decode(value, opts)
+        }
+      if(opts.keys !== false)
+        return function (key) {
+          return codec.decodeKey(precodec.decode(key)[1], opts)
+        }
+      return function () {}
+    },
+    iterator: function (opts, cb) {
       var prefix = opts.prefix || []
       if(opts.lte) opts.lte = encodeKey(prefix, opts.lte)
       else         opts.lt  = precodec.encode([prefix, opts.lt || '~'])
@@ -66,7 +111,7 @@ module.exports = function (db, precodec, codec) {
       opts.valueAsBuffer = codec.isValueAsBuffer(opts)
 
       var _db = db.db || db
-      console.log(opts)
+
       var iterator = _db.iterator (opts)
       return {
         next: function (cb) {
