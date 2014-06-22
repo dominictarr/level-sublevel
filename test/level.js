@@ -9,30 +9,12 @@ var shell = require('../shell') //the shell surrounds the nut
 var codec = require('levelup/lib/codec')
 var bytewise = require('bytewise')
 var concat = require('../codec')
+var pullReadStream = require('../pull')
 
 function create (precodec, db) {
 
   //convert pull stream to iterators
-  function pullIterator (iterator) {
-    var stream = pull.defer()
-
-    stream.setIterator = function (iterator) {
-      stream.resolve(function (end, cb) {
-        if(!end) iterator.next(function (err, key, value) {
-                  if(err) return cb(err)
-                  if(key === undefined || value === undefined)
-                          return cb(true)
-                  cb(null, {key: key, value: value})
-        })
-        else
-          iterator.end(cb)
-      })
-    }
-
-    return stream
-  }
-
-  return shell ( nut ( db || mock(), precodec, codec ), [], pullIterator )
+  return shell ( nut ( db || mock(), precodec, codec ), [], pullReadStream)
 }
 
 function prehookPut (db) {
