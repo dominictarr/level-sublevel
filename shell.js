@@ -80,7 +80,13 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
   emitter.createReadStream = function (opts) {
     opts = opts || {}
     opts.prefix = prefix
-    return createStream(nut.iterator(opts), opts)
+    var stream
+    var it = nut.iterator(opts, function (err, it) {
+      stream.setIterator(it)
+    })
+    stream = createStream(opts, nut.createDecoder(opts))
+    if(it) stream.setIterator(it)
+    return stream
   }
 
   return emitter
