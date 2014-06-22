@@ -15,6 +15,7 @@
     "xtend": "~2.0.4"
   },
   "devDependencies": {
+    "levelup": "dominictarr/node-levelup#inject",
     "bytewise": "~0.7.0",
     "level": "^0.18.0",
     "level-test": ">=1.5.1 <2",
