@@ -17,7 +17,7 @@
   "devDependencies": {
     "levelup": "dominictarr/node-levelup#inject",
     "bytewise": "~0.7.0",
-    "level": "^0.18.0",
+    "level": "~0.18.0",
     "level-test": ">=1.5.1 <2",
     "monotonic-timestamp": "0.0.8",
     "pull-level": "~1.1.1",
