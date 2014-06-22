@@ -15,15 +15,17 @@
     "xtend": "~2.0.4"
   },
   "devDependencies": {
-    "rimraf": "~2.1.4",
-    "shasum": "0.0.2",
+    "bytewise": "~0.7.0",
+    "level": "^0.18.0",
+    "level-test": ">=1.5.1 <2",
     "monotonic-timestamp": "0.0.8",
     "pull-level": "~1.1.1",
-    "level-test": ">=1.5.1 <2",
+    "rimraf": "~2.1.4",
+    "shasum": "0.0.2",
     "stream-to-pull-stream": "~1.2.0",
     "tape": "~1.0.4",
     "through": "~2.3.4",
-    "level": "~0.15.0"
+    "leveldown": "~0.10.2"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
