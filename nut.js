@@ -10,13 +10,17 @@ function getPrefix (db) {
   return db
 }
 
+function has(obj, name) {
+  return Object.hasOwnProperty(obj, name)
+}
+
 module.exports = function (db, precodec, codec) {
   var prehooks = hooks()
   var posthooks = hooks()
   var waiting = [], ready = false
 
   function encodePrefix(prefix, key, opts1, opts2) {
-    return precodec.encode([ prefix, codec.encodeKey(key, opts1, opts2) ])
+    return precodec.encode([ prefix, codec.encodeKey(key, opts1, opts2 ) ])
   }
 
   function decodePrefix(data) {
@@ -33,7 +37,7 @@ module.exports = function (db, precodec, codec) {
     if(db.isOpen())
       ready = true
     else
-      db.open()
+      db.open(start)
   } else {
     db.open(start)
   }
@@ -53,7 +57,7 @@ module.exports = function (db, precodec, codec) {
       }
 
       if(ops.length)
-        db.batch(ops.map(function (op) {
+        (db.db || db).batch(ops.map(function (op) {
           return {
             key: encodePrefix(op.prefix, op.key, opts, op),
             value: codec.encodeValue(op.value, opts, op),
@@ -62,7 +66,7 @@ module.exports = function (db, precodec, codec) {
         }), opts, function (err) {
           if(err) return cb(err)
           ops.forEach(function (op) {
-            posthooks.trigger([op.prefix, op.key], op)
+            posthooks.trigger([op.prefix, op.key], [op])
           })
           cb()
         })
@@ -70,7 +74,11 @@ module.exports = function (db, precodec, codec) {
         cb()
     },
     get: function (key, prefix, opts, cb) {
-      return db.get(encodePrefix(prefix, key, opts), cb)
+      opts.asBuffer = codec.isValueAsBuffer(opts)
+      return (db.db || db).get(encodePrefix(prefix, key, opts), opts, function (err, value) {
+        if(err) cb(err)
+        else    cb(null, codec.decodeValue(value, opts || options))
+      })
     },
     pre: prehooks.add,
     post: posthooks.add,
@@ -78,7 +86,7 @@ module.exports = function (db, precodec, codec) {
       if(opts.keys !== false && opts.values !== false)
         return function (key, value) {
           return {
-            key: codec.decodeKey(key, opts),
+            key: codec.decodeKey(precodec.decode(key)[1], opts),
             value: codec.decodeValue(value, opts)
           }
         }
@@ -94,10 +102,34 @@ module.exports = function (db, precodec, codec) {
     },
     iterator: function (opts, cb) {
       var prefix = opts.prefix || []
-      if(opts.lte) opts.lte = encodeKey(prefix, opts.lte)
-      else         opts.lt  = precodec.encode([prefix, opts.lt || '~'])
-      if(opts.gt)  opts.gt  = precodec.encode([prefix, opts.gt])
-      else         opts.gte = precodec.encode([prefix, opts.gte || ''])
+
+      function encodeKey(key) {
+        return encodePrefix(prefix, key, opts, {})
+      }
+      if(opts.start || opts.end) {
+        if(opts.reverse) {
+          opts.lte = encodeKey(opts.start || '\xff')
+          opts.gte = encodeKey(opts.end || '')
+        } else {
+          opts.gte = encodeKey(opts.start || '')
+          opts.lte = encodeKey(opts.end || '\xff')
+        }
+        delete opts.start
+        delete opts.end
+      } else {
+        if(opts.min) opts.gte = opts.min
+        if(opts.max) opts.lte = opts.max
+
+        if(opts.lte)   opts.lte   = encodeKey(opts.lte)
+        if(opts.lt)    opts.lt    = encodeKey(opts.lt)
+        if(opts.gt)    opts.gt    = encodeKey(opts.gt)
+        if(opts.gte)   opts.gte   = encodeKey(opts.gte)
+      }
+
+      if(!has(opts, 'lte') || !has(opts, 'lt'))
+        opts.lte = encodeKey(precodec.upperBound)
+      if(!has(opts, 'gte') || !has(opts, 'gt'))
+        opts.gte = encodeKey(precodec.lowerBound)
 
       opts.prefix = null
 
@@ -110,24 +142,24 @@ module.exports = function (db, precodec, codec) {
       opts.keyAsBuffer = precodec.buffer
       opts.valueAsBuffer = codec.isValueAsBuffer(opts)
 
-      var _db = db.db || db
-
-      var iterator = _db.iterator (opts)
-      return {
-        next: function (cb) {
-          return iterator.next(function (err, key, value) {
-            if(err) return cb(err)
-            if(key) {
-              key = decodePrefix(key)
-              key = codec.decodeKey(key[1], opts)
-            }
-            if(value)
-              value = codec.decodeValue(value, opts)
-            cb(null, key, value)
-          })
-        },
-        end: iterator.end
+      function wrapIterator (iterator) {
+        return {
+          next: function (cb) {
+            return iterator.next(cb)
+          },
+          end: function (cb) {
+            iterator.end(cb)
+          }
+        }
       }
+
+      if(ready)
+        return wrapIterator((db.db || db).iterator(opts))
+      else
+        waiting.push(function () {
+          cb(null, wrapIterator((db.db || db).iterator(opts)))
+        })
+
     }
   }
 
