@@ -56,29 +56,41 @@ module.exports = function (db, precodec, codec) {
         }
       }
 
+      if('object' !== typeof opts) throw new Error('opts must be object, was:'+ opts) 
+
+      if('function' === typeof opts) cb = opts, opts = {}
+
       if(ops.length)
-        (db.db || db).batch(ops.map(function (op) {
-          return {
-            key: encodePrefix(op.prefix, op.key, opts, op),
-            value: codec.encodeValue(op.value, opts, op),
-            type: op.value ? 'put' : 'del'
+        (db.db || db).batch(
+          ops.map(function (op) {
+            return {
+              key: encodePrefix(op.prefix, op.key, opts, op),
+              value: codec.encodeValue(op.value, opts, op),
+              type: op.value ? 'put' : 'del'
+            }
+          }),
+          opts,
+          function (err) {
+              if(err) return cb(err)
+            ops.forEach(function (op) {
+              posthooks.trigger([op.prefix, op.key], [op])
+            })
+            cb()
           }
-        }), opts, function (err) {
-          if(err) return cb(err)
-          ops.forEach(function (op) {
-            posthooks.trigger([op.prefix, op.key], [op])
-          })
-          cb()
-        })
+        )
       else
         cb()
     },
     get: function (key, prefix, opts, cb) {
       opts.asBuffer = codec.isValueAsBuffer(opts)
-      return (db.db || db).get(encodePrefix(prefix, key, opts), opts, function (err, value) {
-        if(err) cb(err)
-        else    cb(null, codec.decodeValue(value, opts || options))
-      })
+      return (db.db || db).get(
+        encodePrefix(prefix, key, opts),
+        opts,
+        function (err, value) {
+          if(err) cb(err)
+          else    cb(null, codec.decodeValue(value, opts || options))
+        }
+      )
     },
     pre: prehooks.add,
     post: posthooks.add,
@@ -106,13 +118,16 @@ module.exports = function (db, precodec, codec) {
       function encodeKey(key) {
         return encodePrefix(prefix, key, opts, {})
       }
+      var upper = precodec.upperBound
+      var lower = precodec.lowerBound
+
       if(opts.start || opts.end) {
         if(opts.reverse) {
-          opts.lte = encodeKey(opts.start || '\xff')
-          opts.gte = encodeKey(opts.end || '')
+          opts.lte = encodeKey(opts.start || upper)
+          opts.gte = encodeKey(opts.end   || lower)
         } else {
-          opts.gte = encodeKey(opts.start || '')
-          opts.lte = encodeKey(opts.end || '\xff')
+          opts.gte = encodeKey(opts.start || lower)
+          opts.lte = encodeKey(opts.end   || upper)
         }
         delete opts.start
         delete opts.end
@@ -127,9 +142,9 @@ module.exports = function (db, precodec, codec) {
       }
 
       if(!has(opts, 'lte') || !has(opts, 'lt'))
-        opts.lte = encodeKey(precodec.upperBound)
+        opts.lte = encodeKey(upper)
       if(!has(opts, 'gte') || !has(opts, 'gt'))
-        opts.gte = encodeKey(precodec.lowerBound)
+        opts.gte = encodeKey(lower)
 
       opts.prefix = null
 

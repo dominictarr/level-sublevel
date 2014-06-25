@@ -70,7 +70,7 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
   emitter.pre = function (key, hook) {
     if('function' === typeof key) return nut.pre([prefix], key)
     if('string'   === typeof key) return nut.pre([prefix, key], hook)
-    throw new Error('not implemented')
+    throw new Error('not implemented yet')
   }
 
   emitter.post = function (key, hook) {
@@ -78,7 +78,7 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
     if('string'   === typeof key) return nut.post([prefix, key], hook)
 
     //TODO: handle ranges, needed for level-live-stream, etc.
-    throw new Error('not implemented')
+    throw new Error('not implemented yet')
   }
 
   emitter.createReadStream = function (opts) {
