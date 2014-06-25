@@ -90,9 +90,12 @@ function createPostHooks (db) {
         hk ++
         next()
       })
-
+  
+      console.log(db, args)
       db[method].apply(db, args.concat(function (err) {
-        if(err) throw err
+        console.log('**************8')
+        if(err) console.log(err.stack)
+//        if(err) throw err
         cb ++
         next()
       }))
@@ -112,7 +115,7 @@ function createPostHooks (db) {
 
 
   posthook(['put', 'hello', 'there?'], 1, db)
-  posthook(['del', 'hello', 'there?'], 1, db)
+  posthook(['del', 'hello'], 1, db)
   posthook(['batch', [
     { key: 'foo', value: 'bar', type: 'put'},
     { key: 'fuz', value: 'baz', type: 'put'},
@@ -206,7 +209,6 @@ tests.forEach(function (test) {
   test(db2.sublevel('foo'))
   test(db2.sublevel('foo').sublevel('blah'))
 
-  return
   var db3 = create(concat, createTestDb())
 
   test(db3)
