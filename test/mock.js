@@ -18,9 +18,8 @@ function insert (ary, op) {
   ary.push(op)
 }
 
-function get (ary, key) {
+function get (ary, _, key) {
   for(var i in ary) {
-    console.log(ary[i], key, compare(ary[i].key, key))
     if(compare(ary[i].key, key) === 0)
       return ary[i].value
   }
@@ -30,7 +29,6 @@ function get (ary, key) {
 module.exports = function () {
   if(process.env.FOR_REAL) {
     var db = require('level-test')()('test-level-sublevel_' + I++)
-    db.iterator = db.db.iterator
     return db
   }
 
@@ -46,16 +44,15 @@ module.exports = function () {
     })
   }
 
-  emitter.get = function (key, cb) {
-    var value = get(data, key)
+  emitter.get = function (key, opts, cb) {
+    var value = get(data, opts, key)
     next(function () {
       if(!value) cb(new Error('404'))
       else       cb(null, value)
     })
   }
 
-  emitter.db = {}
-  emitter.db.iterator = function (opts) {
+  emitter.iterator = function (opts) {
     var values = data.filter(function (v) {
       return range(opts, v.key)
     }).map(function (op) {
@@ -77,10 +74,15 @@ module.exports = function () {
     }
   }
 
-  emitter.open = function (cb) {
+  var emitter2 = new EventEmitter()
+
+  emitter2.open = emitter.open = function (cb) {
+    emitter2.emit('open')
     cb()
   }
 
-  return emitter
+  emitter2.db = emitter
+
+  return emitter2
 }
 
