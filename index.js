@@ -12,7 +12,7 @@ var ReadStream = require('levelup/lib/read-stream')
 
 module.exports = function (db) {
 
-  db = db.db || db
-  return shell ( nut ( db, precodec, codec ), [], readStream )
+
+  return shell ( nut ( db, precodec, codec ), [], ReadStream )
 
 }
