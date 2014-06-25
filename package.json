@@ -24,7 +24,7 @@
     "rimraf": "~2.1.4",
     "shasum": "0.0.2",
     "stream-to-pull-stream": "~1.2.0",
-    "tape": "~1.0.4",
+    "tape": "~2.13.3",
     "through": "~2.3.4",
     "leveldown": "~0.10.2"
   },
