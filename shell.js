@@ -4,14 +4,16 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
   var emitter = new EventEmitter()
   emitter.sublevels = {}
   prefix = prefix || []
+  function errback (err) { if (err) emitter.emit('error', error)}
   createStream = createStream || function (e) { return e }
   emitter.put = function (key, value, opts, cb) {
     if('function' === typeof opts) cb = opts, opts = {}
+    if(!cb) cb = errback
 
     nut.apply([{
       key: key, value: value,
       prefix: prefix.slice(), type: 'put'
-    }], opts, function (err) {
+    }], opts || {}, function (err) {
       if(err) return cb(err)
       emitter.emit('put', key, value); cb(null)
     })
@@ -23,6 +25,7 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
 
   emitter.del = function (key, opts, cb) {
     if('function' === typeof opts) cb = opts, opts = {}
+    if(!cb) cb = errback
 
     nut.apply([{
       key: key,
@@ -36,6 +39,8 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
   emitter.batch = function (ops, opts, cb) {
     if('function' === typeof opts)
       cb = opts, opts = {}
+    if(!cb) cb = errback
+
     ops = ops.map(function (op) {
       return {
         key:           op.key,
@@ -65,7 +70,6 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
   emitter.pre = function (key, hook) {
     if('function' === typeof key) return nut.pre([prefix], key)
     if('string'   === typeof key) return nut.pre([prefix, key], hook)
-    //TODO: {lt, lte, gt, gte}
     throw new Error('not implemented')
   }
 
@@ -84,8 +88,10 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
     var it = nut.iterator(opts, function (err, it) {
       stream.setIterator(it)
     })
+
     stream = createStream(opts, nut.createDecoder(opts))
     if(it) stream.setIterator(it)
+
     return stream
   }
 
