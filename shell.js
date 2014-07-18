@@ -14,8 +14,8 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
       key: key, value: value,
       prefix: prefix.slice(), type: 'put'
     }], opts || {}, function (err) {
+      if(!err) { emitter.emit('put', key, value); cb(null) }
       if(err) return cb(err)
-      emitter.emit('put', key, value); cb(null)
     })
   }
 
@@ -31,8 +31,8 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
       key: key,
       prefix: prefix.slice(), type: 'del'
     }], opts, function (err) {
+      if(!err) { emitter.emit('del', key); cb(null) }
       if(err) return cb(err)
-      emitter.emit('del', key); cb(null)
     })
   }
 
@@ -51,8 +51,8 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
       }
     })
     nut.apply(ops, opts, function (err) {
+      if(!err) { emitter.emit('batch', ops); cb(null) }
       if(err) return cb(err)
-      emitter.emit('batch', ops); cb(null)
     })
   }
 
@@ -93,6 +93,20 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
     if(it) stream.setIterator(it)
 
     return stream
+  }
+
+  emitter.createValueStream = function (opts) {
+    opts = opts || {}
+    opts.values = true
+    opts.keys = false
+    return emitter.createReadStream(opts)
+  }
+
+  emitter.createKeyStream = function (opts) {
+    opts = opts || {}
+    opts.values = false
+    opts.keys = true
+    return emitter.createReadStream(opts)
   }
 
   return emitter
