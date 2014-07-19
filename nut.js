@@ -14,6 +14,13 @@ function has(obj, name) {
   return Object.hasOwnProperty.call(obj, name)
 }
 
+function clone (_obj) {
+  var obj = {}
+  for(var k in _obj)
+    obj[k] = _obj[k]
+  return obj
+}
+
 module.exports = function (db, precodec, codec) {
   var prehooks = hooks()
   var posthooks = hooks()
@@ -114,8 +121,10 @@ module.exports = function (db, precodec, codec) {
         }
       return function () {}
     },
-    iterator: function (opts, cb) {
+    iterator: function (_opts, cb) {
+      var opts = clone(_opts || {})
       var prefix = opts.prefix || []
+
 
       function encodeKey(key) {
         return encodePrefix(prefix, key, opts, {})

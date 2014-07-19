@@ -1,3 +1,5 @@
+var ltgt = require('ltgt')
+
 //compare two array items
 function isArrayLike (a) {
   return Array.isArray(a) || Buffer.isBuffer(a)
@@ -7,8 +9,13 @@ function isPrimitive (a) {
   return 'string' === typeof a || 'number' === typeof a
 }
 
+function has(o, k) {
+  return Object.hasOwnProperty.call(o, k)
+}
+
 function compare (a, b) {
- if(isArrayLike(a) && isArrayLike(b)) {
+
+  if(isArrayLike(a) && isArrayLike(b)) {
     var l = Math.min(a.length, b.length)
     for(var i = 0; i < l; i++) {
       var c = compare(a[i], b[i])
@@ -55,6 +62,8 @@ exports = module.exports = function (range, key) {
   //then check the last item starts with
   if(isArrayLike(range)) return prefix(range, key)
 
+//  return ltgt.contains(range, key, compare)
+
   if(range.lt  && compare(key, range.lt) >= 0) return false
   if(range.lte && compare(key, range.lte) > 0) return false
   if(range.gt  && compare(key, range.gt) <= 0) return false
@@ -63,5 +72,16 @@ exports = module.exports = function (range, key) {
   return true
 }
 
+function addPrefix(prefix, range) {
+  var r = {}
+  if(has(range, 'lt')) r.lt = [prefix, range.lt]
+  if(has(range, 'gt')) r.gt = [prefix, range.gt]
+  if(has(range, 'lte')) r.lte = [prefix, range.lte]
+  if(has(range, 'gte')) r.gte = [prefix, range.gte]
+  r.reverse = !!range.reverse
+  return r
+}
+
 exports.compare = compare
 exports.prefix = prefix
+exports.addPrefix = addPrefix
