@@ -1,4 +1,17 @@
 var EventEmitter = require('events').EventEmitter
+var addpre = require('./range').addPrefix
+
+function isFunction (f) {
+  return 'function' === typeof f
+}
+
+function isString (s) {
+  return 'string' === typeof s
+}
+
+function isObject (o) {
+  return o && 'object' === typeof o
+}
 
 var sublevel = module.exports = function (nut, prefix, createStream) {
   var emitter = new EventEmitter()
@@ -68,14 +81,17 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
   }
 
   emitter.pre = function (key, hook) {
-    if('function' === typeof key) return nut.pre([prefix], key)
-    if('string'   === typeof key) return nut.pre([prefix, key], hook)
+    if(isFunction(key)) return nut.pre([prefix], key)
+    if(isString(key)) return nut.pre([prefix, key], hook)
+    if(isObject(key)) return nut.pre(addpre(prefix, key), hook)
+
     throw new Error('not implemented yet')
   }
 
   emitter.post = function (key, hook) {
-    if('function' === typeof key) return nut.post([prefix], key)
-    if('string'   === typeof key) return nut.post([prefix, key], hook)
+    if(isFunction(key)) return nut.post([prefix], key)
+    if(isString(key))   return nut.post([prefix, key], hook)
+    if(isObject(key))   return nut.post(addpre(prefix, key), hook)
 
     //TODO: handle ranges, needed for level-live-stream, etc.
     throw new Error('not implemented yet')
