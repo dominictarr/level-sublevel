@@ -11,7 +11,7 @@ function getPrefix (db) {
 }
 
 function has(obj, name) {
-  return Object.hasOwnProperty(obj, name)
+  return Object.hasOwnProperty.call(obj, name)
 }
 
 module.exports = function (db, precodec, codec) {
@@ -55,6 +55,8 @@ module.exports = function (db, precodec, codec) {
           ops.push(ch)
         }
       }
+
+      opts = opts || {}
 
       if('object' !== typeof opts) throw new Error('opts must be object, was:'+ opts) 
 
@@ -104,7 +106,7 @@ module.exports = function (db, precodec, codec) {
         }
       if(opts.values !== false)
         return function (_, value) {
-          return codec.decode(value, opts)
+          return codec.decodeValue(value, opts)
         }
       if(opts.keys !== false)
         return function (key) {
@@ -141,9 +143,9 @@ module.exports = function (db, precodec, codec) {
         if(opts.gte)   opts.gte   = encodeKey(opts.gte)
       }
 
-      if(!has(opts, 'lte') || !has(opts, 'lt'))
+      if(!has(opts, 'lte') && !has(opts, 'lt'))
         opts.lte = encodeKey(upper)
-      if(!has(opts, 'gte') || !has(opts, 'gt'))
+      if(!has(opts, 'gte') && !has(opts, 'gt'))
         opts.gte = encodeKey(lower)
 
       opts.prefix = null
