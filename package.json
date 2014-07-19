@@ -12,7 +12,8 @@
     "string-range": "~1.2.1",
     "level-fix-range": "2.0",
     "pull-stream": "~2.21.0",
-    "xtend": "~2.0.4"
+    "xtend": "~2.0.4",
+    "ltgt": "~1.0.2"
   },
   "devDependencies": {
     "levelup": "dominictarr/node-levelup#inject",
