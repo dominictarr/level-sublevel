@@ -13,12 +13,26 @@ function isObject (o) {
   return o && 'object' === typeof o
 }
 
-var sublevel = module.exports = function (nut, prefix, createStream) {
+var sublevel = module.exports = function (nut, prefix, createStream, options) {
   var emitter = new EventEmitter()
   emitter.sublevels = {}
   prefix = prefix || []
+
   function errback (err) { if (err) emitter.emit('error', error)}
+
   createStream = createStream || function (e) { return e }
+
+  function mergeOpts(opts) {
+    var o = {}
+    if(options)
+      for(var k in options)
+        o[k] = options[k]
+    if(opts)
+      for(var k in opts)
+        o[k] = opts[k]
+    return o
+  }
+
   emitter.put = function (key, value, opts, cb) {
     if('function' === typeof opts) cb = opts, opts = {}
     if(!cb) cb = errback
@@ -26,7 +40,7 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
     nut.apply([{
       key: key, value: value,
       prefix: prefix.slice(), type: 'put'
-    }], opts || {}, function (err) {
+    }], mergeOpts(opts), function (err) {
       if(!err) { emitter.emit('put', key, value); cb(null) }
       if(err) return cb(err)
     })
@@ -43,7 +57,7 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
     nut.apply([{
       key: key,
       prefix: prefix.slice(), type: 'del'
-    }], opts, function (err) {
+    }], mergeOpts(opts), function (err) {
       if(!err) { emitter.emit('del', key); cb(null) }
       if(err) return cb(err)
     })
@@ -63,7 +77,7 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
         valueEncoding: op.valueEncoding,  // * (TODO: encodings on sublevel)
       }
     })
-    nut.apply(ops, opts, function (err) {
+    nut.apply(ops, mergeOpts(opts), function (err) {
       if(!err) { emitter.emit('batch', ops); cb(null) }
       if(err) return cb(err)
     })
@@ -72,12 +86,12 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
   emitter.get = function (key, opts, cb) {
     if('function' === typeof opts) 
       cb = opts, opts = {}
-    nut.get(key, prefix, opts, cb)
+    nut.get(key, prefix, mergeOpts(opts), cb)
   }
 
-  emitter.sublevel = function (name) {
+  emitter.sublevel = function (name, opts) {
     return emitter.sublevels[name] =
-      emitter.sublevels[name] || sublevel(nut, prefix.concat(name), createStream)
+      emitter.sublevels[name] || sublevel(nut, prefix.concat(name), createStream, mergeOpts(opts))
   }
 
   emitter.pre = function (key, hook) {
@@ -98,7 +112,7 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
   }
 
   emitter.createReadStream = function (opts) {
-    opts = opts || {}
+    opts = mergeOpts(opts)
     opts.prefix = prefix
     var stream
     var it = nut.iterator(opts, function (err, it) {
@@ -112,14 +126,14 @@ var sublevel = module.exports = function (nut, prefix, createStream) {
   }
 
   emitter.createValueStream = function (opts) {
-    opts = opts || {}
+    opts = mergeOpts(opts)
     opts.values = true
     opts.keys = false
     return emitter.createReadStream(opts)
   }
 
   emitter.createKeyStream = function (opts) {
-    opts = opts || {}
+    opts = mergeOpts(opts)
     opts.values = false
     opts.keys = true
     return emitter.createReadStream(opts)
