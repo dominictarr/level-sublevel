@@ -1,15 +1,12 @@
 var level = require('level-test')()
 var sublevel = require('../')
 
-function sl (name) {
-  return sublevel(level(name), {sep: '~'})
-}
-
 require('tape')('sublevel', function (t) {
 
   require('rimraf').sync('/tmp/test-sublevel-readstream')
 
-  var base = sl('test-sublevel-readstream')
+  var db = level('test-sublevel-readstream')
+  var base = sublevel(db)
 
   var a    = base.sublevel('A')
 
@@ -28,19 +25,18 @@ require('tape')('sublevel', function (t) {
 
   var _a, _b, _c
 
-  var as = a.createWriteStream()
-  as.write({key: 'a', value: _a ='AAA_'+Math.random()})
-  as.write({key: 'b', value: _b = 'BBB_'+Math.random()})
-  as.write({key: 'c', value: _c = 'CCC_'+Math.random()})
-  as.end()
-  as.on('close', function () {
-
-    all(base, function (err, obj) {
+  a.batch([
+    {key: 'a', value: _a ='AAA_'+Math.random(), type: 'put'},
+    {key: 'b', value: _b = 'BBB_'+Math.random(), type: 'put'},
+    {key: 'c', value: _c = 'CCC_'+Math.random(), type: 'put'},
+  ], function (err) {
+    if(err) throw err
+    all(db, function (err, obj) {
       console.log(obj)
       t.deepEqual(obj, 
-        { '~A~a': _a,
-          '~A~b': _b,
-          '~A~c': _c
+        { '!A!a': _a,
+          '!A!b': _b,
+          '!A!c': _c
         })
 
       all(a, function (err, obj) {
