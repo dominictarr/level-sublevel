@@ -165,6 +165,12 @@ module.exports = function (db, precodec, codec) {
       opts.keyAsBuffer = opts.valueAsBuffer = false
       //************************************************
 
+
+      //this is vital, otherwise limit: undefined will
+      //create an empty stream.
+      if ('number' !== typeof opts.limit)
+        opts.limit = -1
+
       opts.keyAsBuffer = precodec.buffer
       opts.valueAsBuffer = codec.isValueAsBuffer(opts)
 
