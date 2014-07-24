@@ -26,10 +26,10 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     var o = {}
     if(options)
       for(var k in options)
-        o[k] = options[k]
+        if(options[k] != undefined)o[k] = options[k]
     if(opts)
       for(var k in opts)
-        o[k] = opts[k]
+        if(opts[k] != undefined) o[k] = opts[k]
     return o
   }
 
@@ -126,14 +126,14 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
   }
 
   emitter.createValueStream = function (opts) {
-    opts = mergeOpts(opts)
+    opts = opts || {}
     opts.values = true
     opts.keys = false
     return emitter.createReadStream(opts)
   }
 
   emitter.createKeyStream = function (opts) {
-    opts = mergeOpts(opts)
+    opts = opts || {}
     opts.values = false
     opts.keys = true
     return emitter.createReadStream(opts)
