@@ -39,7 +39,7 @@ tape('override json encoding', function (t) {
     db.get('hello', function (err, value) {
       if(err) throw err
 
-      t.deepEqual(value, JSON.parse(JSON.stringify(buf)))
+      t.deepEqual(value, [].slice.call(buf))
       var db2 = db.sublevel('sub', {valueEncoding: 'binary'})
       db2.put('hello', buf, function (err) { 
         if(err) throw err
