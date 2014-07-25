@@ -13,10 +13,11 @@
     "level-fix-range": "2.0",
     "pull-stream": "~2.21.0",
     "xtend": "~2.0.4",
-    "ltgt": "~1.0.2"
+    "ltgt": "~1.0.2",
+    "deferred-leveldown": "~0.2.0"
   },
   "devDependencies": {
-    "levelup": "dominictarr/node-levelup#inject",
+    "levelup": "git:github.com:dominictarr/node-levelup.git#inject",
     "bytewise": "~0.7.0",
     "level": "~0.18.0",
     "level-test": ">=1.5.1 <2",
