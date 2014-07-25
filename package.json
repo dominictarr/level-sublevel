@@ -17,7 +17,7 @@
     "deferred-leveldown": "~0.2.0"
   },
   "devDependencies": {
-    "levelup": "git:github.com:dominictarr/node-levelup.git#inject",
+    "levelup": "https://github.com/dominictarr/node-levelup.git#inject",
     "bytewise": "~0.7.0",
     "level": "~0.18.0",
     "level-test": ">=1.5.1 <2",
