@@ -8,16 +8,12 @@
     "url": "git://github.com/dominictarr/level-sublevel.git"
   },
   "dependencies": {
-    "level-hooks": ">=4.4.0 <5",
-    "string-range": "~1.2.1",
-    "level-fix-range": "2.0",
     "pull-stream": "~2.21.0",
-    "xtend": "~2.0.4",
     "ltgt": "~1.0.2",
-    "deferred-leveldown": "~0.2.0"
+    "deferred-leveldown": "~0.2.0",
+    "levelup": "https://github.com/dominictarr/node-levelup.git#inject"
   },
   "devDependencies": {
-    "levelup": "https://github.com/dominictarr/node-levelup.git#inject",
     "bytewise": "~0.7.0",
     "level": "~0.18.0",
     "level-test": ">=1.5.1 <2",
