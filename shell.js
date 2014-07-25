@@ -16,6 +16,8 @@ function isObject (o) {
 var sublevel = module.exports = function (nut, prefix, createStream, options) {
   var emitter = new EventEmitter()
   emitter.sublevels = {}
+
+  emitter.methods = {}
   prefix = prefix || []
 
   function errback (err) { if (err) emitter.emit('error', error)}
@@ -77,6 +79,7 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
         valueEncoding: op.valueEncoding,  // * (TODO: encodings on sublevel)
       }
     })
+
     nut.apply(ops, mergeOpts(opts), function (err) {
       if(!err) { emitter.emit('batch', ops); cb(null) }
       if(err) return cb(err)
@@ -137,6 +140,11 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     opts.values = false
     opts.keys = true
     return emitter.createReadStream(opts)
+  }
+
+  emitter.close = function (cb) {
+    //TODO: deregister all hooks
+    process.nextTick(cb || function () {})
   }
 
   return emitter
