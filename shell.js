@@ -13,9 +13,13 @@ function isObject (o) {
   return o && 'object' === typeof o
 }
 
+var version = require('./package.json').version
+
 var sublevel = module.exports = function (nut, prefix, createStream, options) {
   var emitter = new EventEmitter()
   emitter.sublevels = {}
+
+  emitter.version = version
 
   emitter.methods = {}
   prefix = prefix || []
