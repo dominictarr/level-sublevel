@@ -10,6 +10,7 @@ tape('not found error', function (t) {
   db.get('foo', function (err, value) {
     t.ok(err)
     t.notOk(value)
+    t.equal(err.name, 'NotFoundError')
     t.end()
   })
 
