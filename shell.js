@@ -1,6 +1,8 @@
 var EventEmitter = require('events').EventEmitter
 var addpre = require('./range').addPrefix
 
+var errors = require('levelup/lib/errors')
+
 function isFunction (f) {
   return 'function' === typeof f
 }
@@ -91,9 +93,13 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
   }
 
   emitter.get = function (key, opts, cb) {
-    if('function' === typeof opts) 
+    if('function' === typeof opts)
       cb = opts, opts = {}
-    nut.get(key, prefix, mergeOpts(opts), cb)
+    nut.get(key, prefix, mergeOpts(opts), function (err, value) {
+      if(err) cb(err)
+      else if(value) cb(null, value)
+      else cb(new errors.NotFoundError())
+    })
   }
 
   emitter.sublevel = function (name, opts) {
