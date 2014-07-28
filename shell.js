@@ -96,9 +96,8 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     if('function' === typeof opts)
       cb = opts, opts = {}
     nut.get(key, prefix, mergeOpts(opts), function (err, value) {
-      if(err) cb(err)
-      else if(value) cb(null, value)
-      else cb(new errors.NotFoundError())
+      if(err) cb(new errors.NotFoundError('Key not found in database', err))
+      else cb(null, value)
     })
   }
 
