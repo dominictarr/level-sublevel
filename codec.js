@@ -1,7 +1,7 @@
 
 //define the key ordering for level-sublevelq
 
-var join = '\x01', separate = '\x00'
+//var join = '\x01', separate = '\x00'
 var join = '#', separate = '!'
 
 exports.encode = function (e) {
