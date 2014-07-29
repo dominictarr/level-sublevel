@@ -75,7 +75,8 @@ module.exports = function (db, precodec, codec) {
             return {
               key: encodePrefix(op.prefix, op.key, opts, op),
               value: codec.encodeValue(op.value, opts, op),
-              type: op.value ? 'put' : 'del'
+              type:
+                op.type || (op.value === undefined ? 'del' : 'put')
             }
           }),
           opts,
