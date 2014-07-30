@@ -7,15 +7,18 @@ var mock  = require('./mock')
 var nut   = require('../nut')
 var shell = require('../shell') //the shell surrounds the nut
 var codec = require('levelup/lib/codec')
-var bytewise = require('bytewise')
 var concat = require('../codec')
+var legacy = require('../codec/legacy')
+var bytewise = require('../codec/bytewise')
+
+
+var codex = [
+  concat,
+  legacy,
+  bytewise
+]
+
 var pullReadStream = require('../pull')
-
-bytewise.lowerBound = null
-bytewise.upperBound = undefined
-
-concat.lowerBound = '\x00'
-concat.upperBound = '\xff'
 
 function create (precodec, db) {
 
@@ -195,31 +198,22 @@ function createTestDb () {
   return new LevelDown(dir)
 }
 
-tests.forEach(function (test) {
+codex.forEach(function (codec) {
 
-  var db1 = create(concat)
+  tests.forEach(function (test) {
 
-  test(db1)
-  test(db1.sublevel('foo'))
-  test(db1.sublevel('foo').sublevel('blah'))
+    var db1 = create(codec)
 
-  var db2 = create(bytewise)
+    test(db1)
+    test(db1.sublevel('foo'))
+    test(db1.sublevel('foo').sublevel('blah'))
 
-  test(db2)
-  test(db2.sublevel('foo'))
-  test(db2.sublevel('foo').sublevel('blah'))
+    var db3 = create(codec, createTestDb())
 
-  var db3 = create(concat, createTestDb())
+    test(db3)
+    test(db3.sublevel('foo'))
+    test(db3.sublevel('foo').sublevel('blah'))
 
-  test(db3)
-  test(db3.sublevel('foo'))
-  test(db3.sublevel('foo').sublevel('blah'))
-
-  var db4 = create(bytewise, createTestDb())
-
-  test(db4)
-  test(db4.sublevel('foo'))
-  test(db4.sublevel('foo').sublevel('blah'))
+  })
 
 })
-
