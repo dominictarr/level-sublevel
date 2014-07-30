@@ -74,7 +74,10 @@ module.exports = function (db, precodec, codec) {
           ops.map(function (op) {
             return {
               key: encodePrefix(op.prefix, op.key, opts, op),
-              value: codec.encodeValue(op.value, opts, op),
+              value:
+                  op.type !== 'del'
+                ? codec.encodeValue(op.value, opts, op)
+                : undefined,
               type:
                 op.type || (op.value === undefined ? 'del' : 'put')
             }
