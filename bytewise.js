@@ -8,7 +8,19 @@ var ReadStream = require('levelup/lib/read-stream')
 
 var precodec = require('./codec/bytewise')
 
+function id (e) {
+  return e
+}
+
 module.exports = function (db) {
+
+  db.options.keyEncoding = {
+    encode: id,
+    decode: id,
+    buffer: true
+  }
+
+  console.log(db.options)
 
   return shell ( nut ( db, precodec, codec ), [], ReadStream, db.options)
 
