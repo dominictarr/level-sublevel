@@ -20,8 +20,6 @@ module.exports = function (db) {
     buffer: true
   }
 
-  console.log(db.options)
-
   return shell ( nut ( db, precodec, codec ), [], ReadStream, db.options)
 
 }
