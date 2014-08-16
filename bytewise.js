@@ -1,9 +1,8 @@
 var nut   = require('./nut')
 var shell = require('./shell') //the shell surrounds the nut
 var codec = require('levelup/lib/codec')
-// Currently this uses pull streams,
-// and not levelup's readstream, but in theory
-// I should be able pretty much just drop that in.
+var merge = require('xtend')
+
 var ReadStream = require('levelup/lib/read-stream')
 
 var precodec = require('./codec/bytewise')
@@ -12,15 +11,15 @@ function id (e) {
   return e
 }
 
-module.exports = function (db) {
+module.exports = function (db, opts) {
 
-  db.options.keyEncoding = {
+  opts = merge(db.options, {
     encode: id,
     decode: id,
     buffer: true
-  }
+  }, opts)
 
-  return shell ( nut ( db, precodec, codec ), [], ReadStream, db.options)
+  return shell ( nut ( db, precodec, codec ), [], ReadStream, opts)
 
 }
 
