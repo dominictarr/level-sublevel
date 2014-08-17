@@ -14,9 +14,11 @@ function id (e) {
 module.exports = function (db, opts) {
 
   opts = merge(db.options, {
-    encode: id,
-    decode: id,
-    buffer: true
+    keyEncoding: {
+      encode: id,
+      decode: id,
+      buffer: true
+    }
   }, opts)
 
   return shell ( nut ( db, precodec, codec ), [], ReadStream, opts)
