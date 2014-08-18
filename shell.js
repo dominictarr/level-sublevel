@@ -26,7 +26,7 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
   emitter.methods = {}
   prefix = prefix || []
 
-  function errback (err) { if (err) emitter.emit('error', error)}
+  function errback (err) { if (err) emitter.emit('error', err) }
 
   createStream = createStream || function (e) { return e }
 
