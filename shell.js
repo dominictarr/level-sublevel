@@ -20,6 +20,7 @@ var version = require('./package.json').version
 var sublevel = module.exports = function (nut, prefix, createStream, options) {
   var emitter = new EventEmitter()
   emitter.sublevels = {}
+  emitter.options = options
 
   emitter.version = version
 

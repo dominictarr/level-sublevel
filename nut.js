@@ -34,6 +34,16 @@ module.exports = function (db, precodec, codec) {
     return precodec.decode(data)
   }
 
+  function addEncodings(op, prefix) {
+    if(prefix && prefix.options) {
+      op.keyEncoding =
+        op.keyEncoding || prefix.options.keyEncoding
+      op.valueEncoding =
+        op.valueEncoding || prefix.options.valueEncoding
+    }
+    return op
+  }
+
   function start () {
     ready = true
     while(waiting.length)
@@ -54,12 +64,13 @@ module.exports = function (db, precodec, codec) {
       //apply prehooks here.
       for(var i = 0; i < ops.length; i++) {
         var op = ops[i]
+        addEncodings(op, op.prefix)
         op.prefix = getPrefix(op.prefix)
         prehooks.trigger([op.prefix, op.key], [op, add, ops])
 
-        function add(ch) {
-          if(ch === false) return delete ops[i]
-          ops.push(ch)
+        function add(op) {
+          if(op === false) return delete ops[i]
+          ops.push(op)
         }
       }
 
@@ -76,7 +87,11 @@ module.exports = function (db, precodec, codec) {
               key: encodePrefix(op.prefix, op.key, opts, op),
               value:
                   op.type !== 'del'
-                ? codec.encodeValue(op.value, opts, op)
+                ? codec.encodeValue(
+                    op.value,
+                    opts,
+                    op
+                  )
                 : undefined,
               type:
                 op.type || (op.value === undefined ? 'del' : 'put')
