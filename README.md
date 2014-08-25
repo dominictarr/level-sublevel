@@ -3,6 +3,7 @@
 Separate sections of levelup, with hooks!
 
 [![build status](https://secure.travis-ci.org/dominictarr/level-sublevel.png)](http://travis-ci.org/dominictarr/level-sublevel)
+
 [![testling badge](https://ci.testling.com/dominictarr/level-sublevel.png)](https://ci.testling.com/dominictarr/level-sublevel)
 
 This module allows you to create seperate sections of a
@@ -27,7 +28,7 @@ we'll talk it through
 
 Unstable: Expect patches and features, possible api changes.
 
-This is module is working well, but may change in the future as its use is futher explored.
+This module is working well, but may change in the future as its use is futher explored.
 
 ## Example
 
