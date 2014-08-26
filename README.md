@@ -12,16 +12,32 @@ for real-time changing data.
 
 ## level-sublevel@6 **BREAKING CHANGES**
 
-The long awaited `level-sublevel` rewrite is nearly ready,
-infact - it is currently _available_,
-(`npm install level-sublevel@6`) but it is also a breaking
-change. So it's good to use it with a new project,
-but I recomment, for now, not upgrading projects that already
-use `level-sublevel@5`. The user api is the same as before,
-but the way that keys are encoded has changed, and _this means
-you cannot run 6 on a database you created with 5_,
-if you are using 5 and want to upgrade - please post an issue and 
-we'll talk it through
+The long awaited `level-sublevel` rewrite is out!
+You are hearby warned this is a _significant breaking_ change.
+So it's good to use it with a new project,
+The user api is the same as before,
+but the way that keys are _encoded_ has changed, and _this means
+you cannot run 6 on a database you created with 5_.
+
+### Legacy Mode
+
+Using leveldb with legacy mode is the simplest way to get the new sublevel
+on top of a database that used old sublevel. Simply require sublevel like this:
+
+``` js
+var level = require('level')
+                                   //  V *** require legacy.js ***
+var sublevel = require('level-sublevel/legacy')
+var db = sublevel(level(path))
+
+```
+
+### Migration Tool
+
+@calvinmetcalf has created a migration tool:
+[sublevel-migrate](https://github.com/calvinmetcalf/sublevel-migrate)
+
+This can be used to copy an old level-sublevel into a the format.
 
 ## Stability
 
