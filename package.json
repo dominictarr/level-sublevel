@@ -10,7 +10,7 @@
   "dependencies": {
     "pull-stream": "~2.21.0",
     "ltgt": "~1.0.2",
-    "levelup": "https://codeload.github.com/dominictarr/node-levelup/tar.gz/inject",
+    "levelup": "~0.19.0",
     "xtend": "~4.0.0"
   },
   "devDependencies": {
