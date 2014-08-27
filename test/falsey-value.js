@@ -1,9 +1,13 @@
 var tape     = require('tape')
-var sublevel = require('../')
+var sublevel = require('../bytewise')
 var level    = require('level-test')()
 
 var falsies = [
   0, null, false, ''
+]
+
+var names = [
+  'zero', 'null', 'false', 'emptystring'
 ]
 
 var db = sublevel(
@@ -11,8 +15,6 @@ var db = sublevel(
 )
 
 falsies.forEach(function (falsey, i) {
-
-
 
   tape('allow falsey value:' + JSON.stringify(falsey),
     function (t) {
@@ -25,5 +27,21 @@ falsies.forEach(function (falsey, i) {
         })
       })
     })
+
+  tape('allow falsey value in key', function (t) {
+    var sdb = db.sublevel(names[i])
+    sdb.put(falsey, {index: i}, function (err) {
+      if(err) throw err
+      sdb.createReadStream({gte: falsey})
+        //this will error if the stream returns more than one item
+        //which it shouldn't.
+        .on('data', function (op) {
+          t.equal(op.key, falsey)
+          t.deepEqual(op.value, {index: i})
+          t.end()
+        })
+    })
+  })
 })
+
 
