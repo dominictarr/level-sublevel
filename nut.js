@@ -146,7 +146,6 @@ module.exports = function (db, precodec, codec) {
 
 
       function encodeKey(key) {
-        console.log("ENCODE", prefix, key)
         return encodePrefix(prefix, key, opts, {})
       }
       var upper = precodec.upperBound
