@@ -146,12 +146,13 @@ module.exports = function (db, precodec, codec) {
 
 
       function encodeKey(key) {
+        console.log("ENCODE", prefix, key)
         return encodePrefix(prefix, key, opts, {})
       }
       var upper = precodec.upperBound
       var lower = precodec.lowerBound
 
-      if(opts.start || opts.end) {
+      if(has(opts, 'start') || has(opts, 'end')) {
         if(opts.reverse) {
           opts.lte = encodeKey(opts.start || upper)
           opts.gte = encodeKey(opts.end   || lower)
@@ -162,13 +163,13 @@ module.exports = function (db, precodec, codec) {
         delete opts.start
         delete opts.end
       } else {
-        if(opts.min) opts.gte = opts.min
-        if(opts.max) opts.lte = opts.max
+        if(has(opts, 'min')) opts.gte = opts.min
+        if(has(opts, 'max')) opts.lte = opts.max
 
-        if(opts.lte)   opts.lte   = encodeKey(opts.lte)
-        if(opts.lt)    opts.lt    = encodeKey(opts.lt)
-        if(opts.gt)    opts.gt    = encodeKey(opts.gt)
-        if(opts.gte)   opts.gte   = encodeKey(opts.gte)
+        if(has(opts, 'lte')) opts.lte   = encodeKey(opts.lte)
+        if(has(opts, 'lt'))  opts.lt    = encodeKey(opts.lt)
+        if(has(opts, 'gt'))  opts.gt    = encodeKey(opts.gt)
+        if(has(opts, 'gte')) opts.gte   = encodeKey(opts.gte)
       }
 
       if(!has(opts, 'lte') && !has(opts, 'lt'))
