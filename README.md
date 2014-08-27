@@ -16,9 +16,13 @@ for real-time changing data.
 The long awaited `level-sublevel` rewrite is out!
 You are hearby warned this is a _significant breaking_ change.
 So it's good to use it with a new project,
-The user api is the same as before,
+The user api is _mostly_ the same as before,
 but the way that keys are _encoded_ has changed, and _this means
 you cannot run 6 on a database you created with 5_.
+
+Also, `createWriteStream` has been removed, in anticipation of [this
+change](https://github.com/rvagg/node-levelup/pull/207) use something
+like [level-write-stream](https://github.com/Raynos/level-write-stream)
 
 ### Legacy Mode
 
