@@ -89,6 +89,10 @@ function addPrefix(prefix, range) {
   if(has(range, 'min')) r.gte = [prefix, range.min]
   if(has(range, 'max')) r.lte = [prefix, range.max]
   r.reverse = !!range.reverse
+
+  //if there where no ranges, then then just use a prefix.
+  if(!r.gte &&!r.lte) return [prefix]
+
   return r
 }
 
