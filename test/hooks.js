@@ -10,6 +10,7 @@ test('subsections', function (t) {
   var bar = base.sublevel('bar')
 
   var n, m, o = m = n = 0
+  var q, r = q = 0
 
   foo.post(function (op) {
     n ++
@@ -24,6 +25,16 @@ test('subsections', function (t) {
     o ++
   })
 
+  foo.pre(function (op) {
+    t.equal(op.type, 'put')
+    q ++
+  })
+
+  base.pre(function (op) {
+    t.equal(op.type, 'put')
+    r ++
+  })
+
   base.batch([
     { key: 'a', value: 1, type: 'put', prefix: foo },
     { key: 'k', value: 2, type: 'put', prefix: foo },
@@ -36,12 +47,12 @@ test('subsections', function (t) {
     t.equal(n, 4)
     t.equal(m, 4)
     t.equal(o, 2)
+    t.equal(q, 4)
+    t.equal(r, 1)
+
     t.end()
   })
 
 })
-
-
-
 
 
