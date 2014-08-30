@@ -84,6 +84,7 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
         prefix:        op.prefix || prefix,
         keyEncoding:   op.keyEncoding,    // *
         valueEncoding: op.valueEncoding,  // * (TODO: encodings on sublevel)
+        type:          op.type
       }
     })
 
