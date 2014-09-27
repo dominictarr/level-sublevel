@@ -42,13 +42,13 @@ var db = sublevel(level(path))
 @calvinmetcalf has created a migration tool:
 [sublevel-migrate](https://github.com/calvinmetcalf/sublevel-migrate)
 
-This can be used to copy an old level-sublevel into a the format.
+This can be used to copy an old level-sublevel into the new format.
 
 ## Stability
 
 Unstable: Expect patches and features, possible api changes.
 
-This module is working well, but may change in the future as its use is futher explored.
+This module is working well, but may change in the future as its use is further explored.
 
 ## Example
 
@@ -60,14 +60,10 @@ var db = Sublevel(LevelUp('/tmp/sublevel-example'))
 var sub = db.sublevel('stuff')
 
 //put a key into the main levelup
-db.put(key, value, function () {
-  
-})
+db.put(key, value, function () {})
 
 //put a key into the sub-section!
-sub.put(key2, value, function () {
-
-})
+sub.put(key2, value, function () {})
 ```
 
 Sublevel prefixes each subsection so that it will not collide
@@ -94,29 +90,24 @@ db.pre(function (ch, add) {
     key: ''+Date.now(), 
     value: ch.key, 
     type: 'put',
-    prefix: sub //NOTE pass the destination db to add
-               //and the value will end up in that subsection!
+    // NOTE: pass the destination db to add the value to that subsection!
+    prefix: sub
   })
 })
 
 db.put('key', 'VALUE', function (err) {
-
-  //read all the records inserted by the hook!
-
-  sub.createReadStream()
-    .on('data', console.log)
-
+  // read all the records inserted by the hook!
+  sub.createReadStream().on('data', console.log)
 })
 ```
 
-Notice that `sub` is the second argument to `add`,
-which tells the hook to save the new record in the `sub` section.
+Notice that the `prefix` property to `add()` is set to `sub`, which tells the hook to save the new record in the `sub` section.
 
 ## Batches
 
 In `sublevel` batches also support a `prefix: subdb` property,
 if set, this row will be inserted into that database section,
-instead of the current section.
+instead of the current section, similar to the `pre` hook above.
 
 ``` js
 var sub1 = db.sublevel('SUB_1')
