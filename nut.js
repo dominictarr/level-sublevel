@@ -1,4 +1,5 @@
 var hooks = require('./hooks')
+var ltgt = require('ltgt')
 
 function isFunction (f) {
   return 'function' === typeof f
@@ -151,25 +152,7 @@ module.exports = function (db, precodec, codec) {
       var upper = precodec.upperBound
       var lower = precodec.lowerBound
 
-      if(has(opts, 'start') || has(opts, 'end')) {
-        if(opts.reverse) {
-          opts.lte = encodeKey(opts.start || upper)
-          opts.gte = encodeKey(opts.end   || lower)
-        } else {
-          opts.gte = encodeKey(opts.start || lower)
-          opts.lte = encodeKey(opts.end   || upper)
-        }
-        delete opts.start
-        delete opts.end
-      } else {
-        if(has(opts, 'min')) opts.gte = opts.min
-        if(has(opts, 'max')) opts.lte = opts.max
-
-        if(has(opts, 'lte')) opts.lte   = encodeKey(opts.lte)
-        if(has(opts, 'lt'))  opts.lt    = encodeKey(opts.lt)
-        if(has(opts, 'gt'))  opts.gt    = encodeKey(opts.gt)
-        if(has(opts, 'gte')) opts.gte   = encodeKey(opts.gte)
-      }
+      ltgt.toLtgt(opts, opts, encodeKey)
 
       if(!has(opts, 'lte') && !has(opts, 'lt'))
         opts.lte = encodeKey(upper)
