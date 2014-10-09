@@ -145,19 +145,11 @@ module.exports = function (db, precodec, codec) {
       var opts = clone(_opts || {})
       var prefix = opts.prefix || []
 
-
       function encodeKey(key) {
         return encodePrefix(prefix, key, opts, {})
       }
-      var upper = precodec.upperBound
-      var lower = precodec.lowerBound
 
-      ltgt.toLtgt(opts, opts, encodeKey)
-
-      if(!has(opts, 'lte') && !has(opts, 'lt'))
-        opts.lte = encodeKey(upper)
-      if(!has(opts, 'gte') && !has(opts, 'gt'))
-        opts.gte = encodeKey(lower)
+      ltgt.toLtgt(opts, opts, encodeKey, precodec.lowerBound, precodec.upperBound)
 
       opts.prefix = null
 
