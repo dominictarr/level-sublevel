@@ -21,7 +21,7 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
   var emitter = new EventEmitter()
   emitter._sublevels = {}
   emitter.__defineGetter__("sublevels", function(){
-      result = {}
+      var result = {}
       for (var k in this._sublevels) {
           result[k.substring(1)] = this._sublevels[k]
       }
