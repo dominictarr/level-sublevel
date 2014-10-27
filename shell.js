@@ -43,10 +43,10 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     var o = {}
     if(options)
       for(var k in options)
-        if(options[k] != undefined)o[k] = options[k]
+        if(options[k] !== undefined)o[k] = options[k]
     if(opts)
       for(var k in opts)
-        if(opts[k] != undefined) o[k] = opts[k]
+        if(opts[k] !== undefined) o[k] = opts[k]
     return o
   }
 
