@@ -11,10 +11,15 @@ test('special names', function (t) {
   var proto = base.sublevel('__proto__')
   var toString = base.sublevel('toString')
 
-  t.deepEqual(base.sublevels, {
+  t.deepEqual(base._sublevels, {
     '$constructor': cons,
     '$__proto__': proto,
     '$toString': toString
+  })
+  t.deepEqual(base.sublevels, {
+    'constructor': cons,
+    '__proto__': proto,
+    'toString': toString
   })
   t.deepEqual(cons.sublevels, {})
 
@@ -27,12 +32,14 @@ test('special names', function (t) {
   t.deepEqual(toString.prefix(), ['toString'])
 
   var consBlerg = cons.sublevel('blerg')
-  t.deepEqual(cons.sublevels, {'$blerg': consBlerg})
+  t.deepEqual(cons._sublevels, {'$blerg': consBlerg})
+  t.deepEqual(cons.sublevels, {'blerg': consBlerg})
   t.strictEqual(cons.sublevel('blerg'), consBlerg)
   t.deepEqual(consBlerg.prefix(), ['constructor', 'blerg'])
 
   var consProto = cons.sublevel('__proto__')
-  t.deepEqual(cons.sublevels, {'$blerg': consBlerg, '$__proto__': consProto})
+  t.deepEqual(cons._sublevels, {'$blerg': consBlerg, '$__proto__': consProto})
+  t.deepEqual(cons.sublevels, {'blerg': consBlerg, '__proto__': consProto})
   t.strictEqual(cons.sublevel('__proto__'), consProto)
   t.deepEqual(consProto.prefix(), ['constructor', '__proto__'])
 
