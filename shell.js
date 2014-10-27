@@ -104,8 +104,8 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
   }
 
   emitter.sublevel = function (name, opts) {
-    return emitter.sublevels[name] =
-      emitter.sublevels[name] || sublevel(nut, prefix.concat(name), createStream, mergeOpts(opts))
+    return emitter.sublevels['$' + name] =
+      emitter.sublevels['$' + name] || sublevel(nut, prefix.concat(name), createStream, mergeOpts(opts))
   }
 
   emitter.pre = function (key, hook) {
