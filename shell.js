@@ -103,6 +103,10 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     })
   }
 
+  emitter.clone = function(opts) {
+    return sublevel(nut, prefix, createStream, mergeOpts(opts))
+  }
+
   emitter.sublevel = function (name, opts) {
     return emitter.sublevels[name] =
       emitter.sublevels[name] || sublevel(nut, prefix.concat(name), createStream, mergeOpts(opts))
