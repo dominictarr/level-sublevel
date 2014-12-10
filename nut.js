@@ -22,9 +22,9 @@ function clone (_obj) {
   return obj
 }
 
-module.exports = function (db, precodec, codec) {
-  var prehooks = hooks()
-  var posthooks = hooks()
+module.exports = function (db, precodec, codec, compare) {
+  var prehooks = hooks(compare)
+  var posthooks = hooks(compare)
   var waiting = [], ready = false
 
   function encodePrefix(prefix, key, opts1, opts2) {

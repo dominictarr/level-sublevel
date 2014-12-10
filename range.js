@@ -56,7 +56,8 @@ function prefix (a, b) {
   return true
 }
 
-exports = module.exports = function (range, key) {
+exports = module.exports = function (range, key, _compare) {
+  _compare = _compare || compare
   //handle prefix specially,
   //check that everything up to the last item is equal
   //then check the last item starts with
@@ -64,10 +65,10 @@ exports = module.exports = function (range, key) {
 
 //  return ltgt.contains(range, key, compare)
 
-  if(range.lt  && compare(key, range.lt) >= 0) return false
-  if(range.lte && compare(key, range.lte) > 0) return false
-  if(range.gt  && compare(key, range.gt) <= 0) return false
-  if(range.gte && compare(key, range.gte) < 0) return false
+  if(range.lt  && _compare(key, range.lt) >= 0) return false
+  if(range.lte && _compare(key, range.lte) > 0) return false
+  if(range.gt  && _compare(key, range.gt) <= 0) return false
+  if(range.gte && _compare(key, range.gte) < 0) return false
 
   return true
 }

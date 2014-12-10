@@ -25,7 +25,7 @@ module.exports = function (compare) {
     trigger: function (key, args) {
       for(var i = 0; i < hooks.length; i++) {
         var test = hooks[i]
-        if(inRange(test.range, key))
+        if(inRange(test.range, key, compare))
           test.hook.apply(this, args)
       }
     }
