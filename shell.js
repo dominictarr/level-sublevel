@@ -162,5 +162,8 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     process.nextTick(cb || function () {})
   }
 
+  emitter.isOpen = nut.isOpen
+  emitter.isClosed = nut.isClosed
+
   return emitter
 }

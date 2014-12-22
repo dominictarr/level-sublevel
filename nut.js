@@ -141,6 +141,20 @@ module.exports = function (db, precodec, codec, compare) {
         }
       return function () {}
     },
+    isOpen: function isOpen() {
+      if (db.db && typeof db.db.isOpen === 'function') {
+        return db.db.isOpen()
+      }
+
+      return db.isOpen()
+    },
+    isClosed: function isClosed() {
+      if (db.db && typeof db.db.isClosed === 'function') {
+        return db.db.isClosed()
+      }
+
+      return db.isClosed()
+    },
     iterator: function (_opts, cb) {
       var opts = clone(_opts || {})
       var prefix = opts.prefix || []
