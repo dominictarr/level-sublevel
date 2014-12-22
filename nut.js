@@ -142,16 +142,14 @@ module.exports = function (db, precodec, codec, compare) {
       return function () {}
     },
     isOpen: function isOpen() {
-      if (db.db && typeof db.db.isOpen === 'function') {
+      if (db.db && isFunction(db.db.isOpen))
         return db.db.isOpen()
-      }
 
       return db.isOpen()
     },
     isClosed: function isClosed() {
-      if (db.db && typeof db.db.isClosed === 'function') {
+      if (db.db && isFunction(db.db.isClosed))
         return db.db.isClosed()
-      }
 
       return db.isClosed()
     },
