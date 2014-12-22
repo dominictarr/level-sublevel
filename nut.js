@@ -61,6 +61,7 @@ module.exports = function (db, precodec, codec, compare) {
   }
 
   return {
+    db: db,
     apply: function (ops, opts, cb) {
       //apply prehooks here.
       for(var i = 0; i < ops.length; i++) {
