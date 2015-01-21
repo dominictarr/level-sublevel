@@ -25,7 +25,7 @@
     "stream-to-pull-stream": "~1.2.0",
     "tape": "~2.14.0",
     "through": "~2.3.4",
-    "leveldown": "~0.10.2"
+    "leveldown": "~1.0.1"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
