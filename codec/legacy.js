@@ -8,7 +8,7 @@ module.exports = {
     return s + (e[1] || '').toString()
   },
   decode: function (e) {
-    var k = e.split('\xff').filter(Boolean)
+    var k = e.toString().split('\xff').filter(Boolean)
     var j = k.pop()
     return [k, j]
   },
