@@ -65,14 +65,15 @@ module.exports = function (db, precodec, codec, compare) {
       //apply prehooks here.
       for(var i = 0; i < ops.length; i++) {
         var op = ops[i]
-        addEncodings(op, op.prefix)
-        op.prefix = getPrefix(op.prefix)
-        prehooks.trigger([op.prefix, op.key], [op, add, ops])
 
         function add(op) {
           if(op === false) return delete ops[i]
           ops.push(op)
         }
+
+        addEncodings(op, op.prefix)
+        op.prefix = getPrefix(op.prefix)
+        prehooks.trigger([op.prefix, op.key], [op, add, ops])
       }
 
       opts = opts || {}
