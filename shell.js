@@ -129,6 +129,7 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     throw new Error('not implemented yet')
   }
 
+  emitter.readStream =
   emitter.createReadStream = function (opts) {
     opts = mergeOpts(opts)
     opts.prefix = prefix
@@ -143,6 +144,7 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     return stream
   }
 
+  emitter.valueStream =
   emitter.createValueStream = function (opts) {
     opts = opts || {}
     opts.values = true
@@ -150,6 +152,7 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     return emitter.createReadStream(opts)
   }
 
+  emitter.keyStream =
   emitter.createKeyStream = function (opts) {
     opts = opts || {}
     opts.values = false
