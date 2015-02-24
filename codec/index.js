@@ -16,5 +16,5 @@ exports.decode = function (s) {
 exports.buffer = false
 
 exports.lowerBound = '\x00'
-exports.upperBound = '\xff'
+exports.upperBound = '\uffff'
 
