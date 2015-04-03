@@ -5,7 +5,7 @@
   "homepage": "https://github.com/dominictarr/level-sublevel",
   "repository": {
     "type": "git",
-    "url": "git://github.com/dominictarr/level-sublevel.git"
+    "url": "https://github.com/dominictarr/level-sublevel.git"
   },
   "dependencies": {
     "pull-stream": "~2.21.0",
