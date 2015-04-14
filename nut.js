@@ -118,7 +118,7 @@ module.exports = function (db, precodec, codec, compare) {
         opts,
         function (err, value) {
           if(err) cb(err)
-          else    cb(null, codec.decodeValue(value, opts || options))
+          else    cb(null, codec.decodeValue(value, opts))
         }
       )
     },
