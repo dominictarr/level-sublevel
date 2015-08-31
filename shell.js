@@ -162,7 +162,9 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
 
   emitter.close = function (cb) {
     //TODO: deregister all hooks
-    process.nextTick(cb || function () {})
+    cb = cb || function () {}
+    if (!prefix.length) nut.close(cb)
+    else process.nextTick(cb)
   }
 
   emitter.isOpen = nut.isOpen
