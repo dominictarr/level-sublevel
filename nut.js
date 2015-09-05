@@ -154,6 +154,9 @@ module.exports = function (db, precodec, codec, compare) {
 
       return db.isClosed()
     },
+    close: function close (cb) {
+      return db.close(cb)
+    },
     iterator: function (_opts, cb) {
       var opts = clone(_opts || {})
       var prefix = opts.prefix || []
