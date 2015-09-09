@@ -79,14 +79,6 @@ function addPrefix(prefix, range) {
   if(has(range, 'gt')) r.gt = [prefix, range.gt]
   if(has(range, 'lte')) r.lte = [prefix, range.lte]
   if(has(range, 'gte')) r.gte = [prefix, range.gte]
-  if(has(range, 'start')) {
-    if(range.reverse)  r.lte = [prefix, range.start]
-    else               r.gte = [prefix, range.start]
-  }
-  if(has(range, 'end')) {
-    if(range.reverse)  r.gte = [prefix, range.end]
-    else               r.lte = [prefix, range.end]
-  }
   if(has(range, 'min')) r.gte = [prefix, range.min]
   if(has(range, 'max')) r.lte = [prefix, range.max]
   r.reverse = !!range.reverse

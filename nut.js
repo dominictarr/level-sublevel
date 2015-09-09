@@ -167,6 +167,10 @@ module.exports = function (db, precodec, codec, compare) {
 
       ltgt.toLtgt(opts, opts, encodeKey, precodec.lowerBound, precodec.upperBound)
 
+      // if these legacy values are in the options, remove them
+      delete opts.start
+      delete opts.end
+
       opts.prefix = null
 
       //************************************************
