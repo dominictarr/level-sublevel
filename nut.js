@@ -159,17 +159,15 @@ module.exports = function (db, precodec, codec, compare) {
     },
     iterator: function (_opts, cb) {
       var opts = clone(_opts || {})
-      var prefix = opts.prefix || []
+      var prefix = _opts.prefix || []
 
       function encodeKey(key) {
         return encodePrefix(prefix, key, opts, {})
       }
 
-      ltgt.toLtgt(opts, opts, encodeKey, precodec.lowerBound, precodec.upperBound)
+      ltgt.toLtgt(_opts, opts, encodeKey, precodec.lowerBound, precodec.upperBound)
 
       // if these legacy values are in the options, remove them
-      delete opts.start
-      delete opts.end
 
       opts.prefix = null
 

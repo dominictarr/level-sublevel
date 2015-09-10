@@ -63,30 +63,18 @@ exports = module.exports = function (range, key, _compare) {
   //then check the last item starts with
   if(isArrayLike(range)) return prefix(range, key)
 
-//  return ltgt.contains(range, key, compare)
-
-  if(range.lt  && _compare(key, range.lt) >= 0) return false
-  if(range.lte && _compare(key, range.lte) > 0) return false
-  if(range.gt  && _compare(key, range.gt) <= 0) return false
-  if(range.gte && _compare(key, range.gte) < 0) return false
-
-  return true
+  return ltgt.contains(range, key, compare)
 }
 
 function addPrefix(prefix, range) {
-  var r = {}
-  if(has(range, 'lt')) r.lt = [prefix, range.lt]
-  if(has(range, 'gt')) r.gt = [prefix, range.gt]
-  if(has(range, 'lte')) r.lte = [prefix, range.lte]
-  if(has(range, 'gte')) r.gte = [prefix, range.gte]
-  if(has(range, 'min')) r.gte = [prefix, range.min]
-  if(has(range, 'max')) r.lte = [prefix, range.max]
-  r.reverse = !!range.reverse
+  var o = ltgt.toLtgt(range, null, function (key) {
+    return [prefix, key]
+  })
 
   //if there where no ranges, then then just use a prefix.
-  if(!r.gte &&!r.lte) return [prefix]
+  if(!has(o, 'gte') && !has(o, 'lte')) return [prefix]
 
-  return r
+  return o
 }
 
 exports.compare = compare
