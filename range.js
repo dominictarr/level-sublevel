@@ -14,7 +14,6 @@ function has(o, k) {
 }
 
 function compare (a, b) {
-
   if(isArrayLike(a) && isArrayLike(b)) {
     var l = Math.min(a.length, b.length)
     for(var i = 0; i < l; i++) {
@@ -63,7 +62,7 @@ exports = module.exports = function (range, key, _compare) {
   //then check the last item starts with
   if(isArrayLike(range)) return prefix(range, key)
 
-  return ltgt.contains(range, key, compare)
+  return ltgt.contains(range, key, _compare)
 }
 
 function addPrefix(prefix, range) {
