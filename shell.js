@@ -1,7 +1,7 @@
 var EventEmitter = require('events').EventEmitter
 var addpre = require('./range').addPrefix
 
-var errors = require('levelup/lib/errors')
+var errors = require('level-errors')
 
 function isFunction (f) {
   return 'function' === typeof f
