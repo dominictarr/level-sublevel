@@ -4,14 +4,14 @@
 var nut   = require('./nut')
 var shell = require('./shell') //the shell surrounds the nut
 var precodec = require('./codec')
-var codec = require('levelup/lib/codec')
+var Codec = require('level-codec')
 var merge = require('xtend')
-
-var ReadStream = require('levelup/lib/read-stream')
+var IteratorStream = require('level-iterator-stream');
 
 var sublevel = function (db, opts) {
   opts = merge(db.options, opts)
-  return shell ( nut ( db, precodec, codec ), [], ReadStream, opts)
+  codec = new Codec(opts)
+  return shell ( nut ( db, precodec, codec ), [], IteratorStream, opts)
 }
 
 module.exports = function (db, opts) {
