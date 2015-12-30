@@ -71,7 +71,7 @@ with the outer db when saving or reading!
 
 ## Hooks
 
-Hooks are specially built into Sublevel so that you can 
+Hooks are specially built into Sublevel so that you can
 do all sorts of clever stuff, like generating views or
 logs when records are inserted!
 
@@ -87,8 +87,8 @@ var sub = db.sublevel('SEQ')
 
 db.pre(function (ch, add) {
   add({
-    key: ''+Date.now(), 
-    value: ch.key, 
+    key: ''+Date.now(),
+    value: ch.key,
     type: 'put',
     // NOTE: pass the destination db to add the value to that subsection!
     prefix: sub
@@ -111,11 +111,15 @@ instead of the current section, similar to the `pre` hook above.
 
 ``` js
 var sub1 = db.sublevel('SUB_1')
-var sub2 = db.sublevel('SUM_2')
+var sub2 = db.sublevel('SUB_2')
 
 sub.batch([
   {key: 'key', value: 'Value', type: 'put'},
+  // Pass the sublevel instance
   {key: 'key', value: 'Value', type: 'put', prefix: sub2},
+  // Or pass an array with the sublevel string. This is useful if you need
+  // to serialize the function call, as with multilevel/RPC
+  {key: 'key', value: 'Value', type: 'put', prefix: ['SUB_2']}
 ], function (err) {...})
 ```
 
