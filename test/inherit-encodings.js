@@ -7,7 +7,7 @@ var level = require('level-test')()
 
 tape('inherit json encoding', function (t) {
 
-  var db = sublevel(level('simple', {encoding: 'json'}))
+  var db = sublevel(level('simple', {valueEncoding: 'json'}))
   db.put('hello', {ok: true}, function (err) {
     if(err) throw err
 
@@ -16,7 +16,7 @@ tape('inherit json encoding', function (t) {
 
       t.deepEqual(value, {ok: true})
       var db2 = db.sublevel('sub')
-      db2.put('hello', {ok: true}, function (err) { 
+      db2.put('hello', {ok: true}, function (err) {
         if(err) throw err
 
         db2.get('hello', function (err, value) {
@@ -30,7 +30,7 @@ tape('inherit json encoding', function (t) {
 })
 
 tape('override json encoding', function (t) {
-  var db = sublevel(level('level-sublevel_override', {encoding: 'json'}))
+  var db = sublevel(level('level-sublevel_override', {valueEncoding: 'json'}))
   var buf = new Buffer([1,2,3,4])
 
   db.put('hello', buf, function (err) {
@@ -41,7 +41,7 @@ tape('override json encoding', function (t) {
 
       t.deepEqual(value.data || value, [].slice.call(buf))
       var db2 = db.sublevel('sub', {valueEncoding: 'binary'})
-      db2.put('hello', buf, function (err) { 
+      db2.put('hello', buf, function (err) {
         if(err) throw err
 
         db2.get('hello', function (err, value) {
