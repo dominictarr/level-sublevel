@@ -16,16 +16,15 @@
     "typewiselite": "~1.0.0"
   },
   "devDependencies": {
-    "level": "~0.18.0",
-    "level-test": ">=1.5.1 <2",
+    "level": "^1.4.0",
+    "level-test": "^2.0.1",
     "monotonic-timestamp": "0.0.8",
     "pull-level": "~1.1.1",
     "rimraf": "~2.1.4",
     "shasum": "0.0.2",
     "stream-to-pull-stream": "~1.2.0",
     "tape": "~2.14.0",
-    "through": "~2.3.4",
-    "leveldown": "~1.0.1"
+    "through": "~2.3.4"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
