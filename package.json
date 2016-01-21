@@ -12,7 +12,7 @@
     "ltgt": "~2.1.1",
     "levelup": "~0.19.0",
     "xtend": "~4.0.0",
-    "bytewise": "~0.7.1",
+    "bytewise": "~1.1.0",
     "typewiselite": "~1.0.0"
   },
   "devDependencies": {
