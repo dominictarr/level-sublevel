@@ -6,11 +6,11 @@ var shell = require('./shell') //the shell surrounds the nut
 var precodec = require('./codec')
 var Codec = require('level-codec')
 var merge = require('xtend')
-var IteratorStream = require('level-iterator-stream');
+var IteratorStream = require('level-iterator-stream')
 
 var sublevel = function (db, opts) {
   opts = merge(db.options, opts)
-  codec = new Codec(opts)
+  var codec = new Codec(opts)
   return shell ( nut ( db, precodec, codec ), [], IteratorStream, opts)
 }
 

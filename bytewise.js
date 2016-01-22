@@ -1,9 +1,9 @@
 var nut     = require('./nut')
 var shell   = require('./shell') //the shell surrounds the nut
-var codec   = require('levelup/lib/codec')
+var Codec   = require('level-codec')
 var merge   = require('xtend')
 var compare = require('typewiselite')
-var ReadStream = require('levelup/lib/read-stream')
+var IteratorStream = require('level-iterator-stream')
 
 var precodec = require('./codec/bytewise')
 
@@ -21,9 +21,11 @@ module.exports = function (db, opts) {
     }
   }, opts)
 
+  var codec = new Codec(opts)
+
   return shell (
     nut ( db, precodec, codec, compare ),
-    [], ReadStream, opts
+    [], IteratorStream, opts
   )
 }
 
