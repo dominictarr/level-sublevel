@@ -24,6 +24,15 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
 
   emitter.version = version
 
+  // set the leveldown instance
+  emitter.db = nut.db.db ? nut.db.db : nut.db
+  // work around DeferredLevelDown limitations
+  if (typeof nut.db.once === 'function') {
+    nut.db.once('open', function onOpen() {
+      emitter.db = nut.db.db ? nut.db.db : nut.db
+    })
+  }
+
   emitter.methods = {}
   prefix = prefix || []
 
