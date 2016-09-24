@@ -170,5 +170,7 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
   emitter.isOpen = nut.isOpen
   emitter.isClosed = nut.isClosed
 
+  emitter.location = nut.location
+
   return emitter
 }

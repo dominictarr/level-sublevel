@@ -1,4 +1,3 @@
-
 var inRange = require('./range')
 
 module.exports = function (compare) {
