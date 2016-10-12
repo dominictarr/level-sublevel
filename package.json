@@ -8,12 +8,13 @@
     "url": "git://github.com/dominictarr/level-sublevel.git"
   },
   "dependencies": {
-    "pull-stream": "~2.21.0",
-    "ltgt": "~2.1.1",
-    "levelup": "~0.19.0",
-    "xtend": "~4.0.0",
     "bytewise": "~1.1.0",
-    "typewiselite": "~1.0.0"
+    "levelup": "~0.19.0",
+    "ltgt": "~2.1.1",
+    "pull-level": "^2.0.3",
+    "pull-stream": "^3.4.5",
+    "typewiselite": "~1.0.0",
+    "xtend": "~4.0.0"
   },
   "devDependencies": {
     "level": "^1.4.0",
