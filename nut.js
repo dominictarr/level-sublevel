@@ -8,6 +8,7 @@ function isFunction (f) {
 function getPrefix (db) {
   if(db == null) return db
   if(isFunction(db.prefix)) return db.prefix()
+  if(typeof db === 'string') return [db]
   return db
 }
 
@@ -79,7 +80,7 @@ module.exports = function (db, precodec, codec, compare) {
 
       opts = opts || {}
 
-      if('object' !== typeof opts) throw new Error('opts must be object, was:'+ opts) 
+      if('object' !== typeof opts) throw new Error('opts must be object, was:'+ opts)
 
       if('function' === typeof opts) cb = opts, opts = {}
 
