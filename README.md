@@ -6,7 +6,7 @@ Separate sections of levelup, with hooks!
 
 [![testling badge](https://ci.testling.com/dominictarr/level-sublevel.png)](https://ci.testling.com/dominictarr/level-sublevel)
 
-This module allows you to create seperate sections of a
+This module allows you to create separate sections of a
 [levelup](https://github.com/rvagg/node-levelup) database,
 kinda like tables in an sql database, but evented, and ranged,
 for real-time changing data.
@@ -14,7 +14,7 @@ for real-time changing data.
 ## level-sublevel@6 **BREAKING CHANGES**
 
 The long awaited `level-sublevel` rewrite is out!
-You are hearby warned this is a _significant breaking_ change.
+You are hereby warned this is a _significant breaking_ change.
 So it's good to use it with a new project,
 The user api is _mostly_ the same as before,
 but the way that keys are _encoded_ has changed, and _this means
