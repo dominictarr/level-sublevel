@@ -1,12 +1,13 @@
 
 
 var pull = require('pull-stream')
+var defer = require('pull-defer/source')
 // Currently this uses pull streams,
 // and not levelup's readstream, but in theory
 // I should be able pretty much just drop that in.
 
 module.exports = function pullReadStream (options, makeData) {
-  var stream = pull.defer()
+  var stream = defer()
 
   stream.setIterator = function (iterator) {
     stream.resolve(function (end, cb) {
