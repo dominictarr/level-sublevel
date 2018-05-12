@@ -1,7 +1,7 @@
 {
   "name": "level-sublevel",
   "description": "partition levelup databases",
-  "version": "6.6.1",
+  "version": "6.6.2",
   "homepage": "https://github.com/dominictarr/level-sublevel",
   "repository": {
     "type": "git",
