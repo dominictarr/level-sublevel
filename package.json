@@ -11,14 +11,15 @@
     "bytewise": "~1.1.0",
     "levelup": "~0.19.0",
     "ltgt": "~2.1.1",
+    "pull-defer": "^0.2.2",
     "pull-level": "^2.0.3",
-    "pull-stream": "^3.4.5",
+    "pull-stream": "^3.6.8",
     "typewiselite": "~1.0.0",
     "xtend": "~4.0.0"
   },
   "devDependencies": {
-    "level": "^1.4.0",
-    "level-test": "^2.0.1",
+    "level": "^3.0.1",
+    "level-test": "^3.0.0",
     "monotonic-timestamp": "0.0.8",
     "pull-level": "~1.1.1",
     "rimraf": "~2.1.4",
