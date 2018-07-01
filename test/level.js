@@ -6,7 +6,7 @@ var path = require('path')
 var mock  = require('./mock')
 var nut   = require('../nut')
 var shell = require('../shell') //the shell surrounds the nut
-var codec = require('levelup/lib/codec')
+var Codec = require('level-codec')
 var concat = require('../codec')
 var legacy = require('../codec/legacy')
 var bytewise = require('../codec/bytewise')
@@ -23,7 +23,7 @@ var pullReadStream = require('../pull')
 function create (precodec, db) {
 
   //convert pull stream to iterators
-  return shell ( nut ( db || mock(), precodec, codec ), [], pullReadStream)
+  return shell ( nut ( db || mock(), precodec, new Codec ), [], pullReadStream)
 }
 
 function prehookPut (db) {

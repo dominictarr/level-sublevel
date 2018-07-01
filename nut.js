@@ -113,7 +113,7 @@ module.exports = function (db, precodec, codec, compare) {
         cb()
     },
     get: function (key, prefix, opts, cb) {
-      opts.asBuffer = codec.isValueAsBuffer(opts)
+      opts.asBuffer = codec.valueAsBuffer(opts)
       return (db.db || db).get(
         encodePrefix(prefix, key, opts),
         opts,
@@ -185,7 +185,7 @@ module.exports = function (db, precodec, codec, compare) {
         opts.limit = -1
 
       opts.keyAsBuffer = precodec.buffer
-      opts.valueAsBuffer = codec.isValueAsBuffer(opts)
+      opts.valueAsBuffer = codec.valueAsBuffer(opts)
 
       function wrapIterator (iterator) {
         return {
