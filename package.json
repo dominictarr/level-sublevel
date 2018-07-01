@@ -21,7 +21,6 @@
     "level": "^3.0.1",
     "level-test": "^3.0.0",
     "monotonic-timestamp": "0.0.8",
-    "pull-level": "~1.1.1",
     "rimraf": "~2.1.4",
     "shasum": "0.0.2",
     "stream-to-pull-stream": "~1.2.0",
