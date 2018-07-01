@@ -12,7 +12,6 @@
     "level-codec": "^9.0.0",
     "level-errors": "^2.0.0",
     "level-iterator-stream": "^2.0.3",
-    "levelup": "^0.19.1",
     "ltgt": "~2.1.1",
     "pull-defer": "^0.2.2",
     "pull-level": "^2.0.3",
