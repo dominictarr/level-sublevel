@@ -3,34 +3,33 @@ var inherits = require('util').inherits;
 var EncodingError = require('level-errors').EncodingError;
 
 function wrapIterator(it, options, makeData) {
-  return {next, end};
-  
-  function next(callback) {
-    it.next(function(err, key, value) {
-      if (err) {
-        return callback(err);
-      }
-      if (key === undefined && value === undefined) {
-        return callback(err, key, value);
-      }
-      var data;
-      try {
-        data = makeData(key, value);
-      } catch (err) {
-        return callback(new EncodingError(err));
-      }
-      if (options.keys !== false && options.values === false) {
-        return callback(err, data, value);
-      }
-      if (options.keys === false && options.values !== false) {
-        return callback(err, key, data);
-      }
-      return callback(err, data.key, data.value);
-    });
-  }
-  
-  function end(callback) {
-    return it.end(callback);
+  return {
+      next: function (callback) {
+      it.next(function(err, key, value) {
+        if (err) {
+          return callback(err);
+        }
+        if (key === undefined && value === undefined) {
+          return callback(err, key, value);
+        }
+        var data;
+        try {
+          data = makeData(key, value);
+        } catch (err) {
+          return callback(new EncodingError(err));
+        }
+        if (options.keys !== false && options.values === false) {
+          return callback(err, data, value);
+        }
+        if (options.keys === false && options.values !== false) {
+          return callback(err, key, data);
+        }
+        return callback(err, data.key, data.value);
+      });
+    },
+    end: function end(callback) {
+      return it.end(callback);
+    }
   }
 }
 
@@ -69,3 +68,5 @@ ReadStream.prototype._read = function () {
 }
 
 module.exports = ReadStream
+
+
