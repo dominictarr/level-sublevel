@@ -19,7 +19,15 @@ var version = require('./package.json').version
 
 var sublevel = module.exports = function (nut, prefix, createStream, options) {
   var emitter = new EventEmitter()
-  emitter.sublevels = {}
+  emitter._sublevels = {}
+  emitter.__defineGetter__("sublevels", function(){
+      var result = {}
+      for (var k in this._sublevels) {
+          result[k.substring(1)] = this._sublevels[k]
+      }
+      return result
+  })
+
   emitter.options = options
 
   emitter.version = version
@@ -35,10 +43,10 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
     var o = {}
     if(options)
       for(var k in options)
-        if(options[k] != undefined)o[k] = options[k]
+        if(options[k] !== undefined)o[k] = options[k]
     if(opts)
       for(var k in opts)
-        if(opts[k] != undefined) o[k] = opts[k]
+        if(opts[k] !== undefined) o[k] = opts[k]
     return o
   }
 
@@ -108,8 +116,8 @@ var sublevel = module.exports = function (nut, prefix, createStream, options) {
   }
 
   emitter.sublevel = function (name, opts) {
-    return emitter.sublevels[name] =
-      emitter.sublevels[name] || sublevel(nut, prefix.concat(name), createStream, mergeOpts(opts))
+    return emitter._sublevels['$' + name] =
+      emitter._sublevels['$' + name] || sublevel(nut, prefix.concat(name), createStream, mergeOpts(opts))
   }
 
   emitter.pre = function (key, hook) {
